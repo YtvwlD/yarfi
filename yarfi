@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+import os
+import sys
+
+os.execv("/sbin/init", sys.argv) #does nothing special yet
