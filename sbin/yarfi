@@ -18,5 +18,36 @@
 
 import os
 import sys
+import subprocess
+args = {"os": os, "sys": sys, "subprocess": subprocess}
 
-os.execv("/sbin/init", sys.argv) #does nothing special yet
+modules = []
+
+wanted_target = ""
+cmdline = open("/proc/cmdline")
+for line in cmdline:
+	args = line.split(" ")
+	for x in args:
+		z = x.split("=")
+		if z[0] == "yarfi-target":
+			wanted_target = z[1]
+cmdline.close()
+if wanted_target == "":
+	wanted_target = "default"
+
+def reach_target(target):
+	os.chdir("/etc/yarfi/targets")
+	Target = __import__(wanted_target).target()
+	for conflict in Target.conflicts:
+		for module in modules:
+			if conflict == module.__name__:
+				stop(conflict)
+	remaining_dependencies = Target.depends
+	for module in modules:
+		for dependency in remaining_dependencies:
+			if module.__name__ == dependency:
+				remaining_dependencies.remove(dependency)
+	for dependency in remaining_dependencies:
+		start(dependency)
+
+reach_target(wanted_target)
