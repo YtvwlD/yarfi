@@ -1,5 +1,5 @@
 class service:
-	def __init__():
+	def __init__(self):
 		self.description = "message bus"
 		self.depends = ["filesystem"]
 		self.conflicts = []
