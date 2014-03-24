@@ -27,20 +27,20 @@ def reach_target(target):
 	os.chdir("/etc/yarfi/targets")
 	Target = __import__(wanted_target).target()
 	for conflict in Target.conflicts:
-		for service in services:
-			if conflict == service.__name__:
+		for srv in services:
+			if conflict == srv.__name__:
 				stop(conflict)
 	remaining_dependencies = Target.depends
-	for service in services:
+	for srv in services:
 		for dependency in remaining_dependencies:
-			if service.__name__ == dependency:
+			if srv.__name__ == dependency:
 				remaining_dependencies.remove(dependency)
 	for dependency in remaining_dependencies:
 		start(dependency)
 
-def start(service):
+def start(srv):
 	os.chdir("/etc/yarfi/services")
-	Service = __import__(service).service()
+	Service = __import__(srv).service()
 	for conflict in Service.conflicts:
 		for x in services:
 			if conflict == x.__name__:
@@ -55,9 +55,9 @@ def start(service):
 	Service.start(args)
 	services.append(Service)
 	
-def stop(service):
+def stop(srv):
 	for x in services:
-		if x.__name__ == service:
+		if x.__name__ == srv:
 			Service = x
 	for x in services:
 		for dependency in x.depends:
@@ -83,7 +83,7 @@ if wanted_target == "":
 	wanted_target = "default"
 
 class DBusService(dbus.service.Object):
-	def __init__(slef):
+	def __init__(self):
 		busName = dbus.service.BusName("yarfi", bus=dbus.SystemBus())
 		dbus.service.Object.__init__(self, busName, "/yarfi")
 	

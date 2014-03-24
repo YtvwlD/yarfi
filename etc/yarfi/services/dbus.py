@@ -44,7 +44,7 @@ class service:
 		
 		subprocess.Popen(["dbus-uuidgen", "--ensure"]).wait()
 		
-		self.process = subprocess.Popen(["dbus-daemon", "--system"]))
+		self.process = subprocess.Popen(["dbus-daemon", "--system"])
 
 	def stop(self, args):
 		os = args["os"]
