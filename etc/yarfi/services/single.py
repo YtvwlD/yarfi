@@ -18,6 +18,7 @@ class service:
 		self.description = "Single User Mode"
 		self.depends = ["dbus"]
 		self.conflicts = []
+		self.respawn = True
 	
 	def start(self, args):
 		subprocess = args["subprocess"]
