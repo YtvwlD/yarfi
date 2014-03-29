@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class service:
 	def __init__(self):
-		self.description = "Single User Mode"
+		self.description = "Single User Mode" 
 		self.depends = ["dbus"]
 		self.conflicts = []
 		self.respawn = True
