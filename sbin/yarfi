@@ -37,7 +37,9 @@ def reach_target(wanted_target):
 		for srv in services:
 			if conflict == srv.__name__:
 				stop(conflict)
-	remaining_dependencies = Target.depends
+	for trg in Target.depends_targets:
+		reach_target(trg)
+	remaining_dependencies = Target.depends_services
 	for srv in services:
 		for dependency in remaining_dependencies:
 			if srv.__name__ == dependency:
