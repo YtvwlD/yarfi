@@ -3,6 +3,6 @@ python:
   - "3.3"
   - "2.7"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: wget http://dbus.freedesktop.org/releases/dbus-python/dbus-python-1.2.0.tar.gz; tar xvzf dbus-python-1.2.0.tar.gz; cd dbus-python-1.2.0; ./configure; make; make install; pip install glib
+install: pip install dbus-python
 # command to run tests, e.g. python setup.py test
 script:  python sbin/yarfi
