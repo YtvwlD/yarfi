@@ -19,9 +19,10 @@
 import os
 import sys
 import subprocess
-import glib
+from PySide.QtCore import QCoreApplication
 import dbus
 import dbus.service
+from dbus.mainloop.qt import DBusQtMainLoop
 import time
 
 args = {"os": os, "sys": sys, "subprocess": subprocess, "time": time}
@@ -29,6 +30,7 @@ args = {"os": os, "sys": sys, "subprocess": subprocess, "time": time}
 services = []
 
 sys.path[0] = "/etc/yarfi"
+app = QCoreApplication(sys.argv)
 
 def reach_target(wanted_target):
 	Target = __import__("targets."+wanted_target, fromlist=[wanted_target]).target()
@@ -96,7 +98,9 @@ if wanted_target == "":
 
 class DBusService(dbus.service.Object):
 	def __init__(self):
-		busName = dbus.service.BusName("yarfi", bus=dbus.SystemBus())
+		DBusQtMainLoop(set_as_default=True)
+		self.bus = dbus.SystemBus()
+		self.busName = dbus.service.BusName("yarfi", bus=self.bus)
 		dbus.service.Object.__init__(self, busName, "/yarfi")
 	
 	@dbus.service.method("yarfi.start", in_signature="s", out_signature=None)
@@ -112,5 +116,4 @@ class DBusService(dbus.service.Object):
 		reach_target(target)
 
 reach_target(wanted_target)
-loop = glib.MainLoop()
-loop.run()
+app.exec_()
