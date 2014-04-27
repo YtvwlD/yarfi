@@ -51,37 +51,41 @@ def reach_target(wanted_target):
 	print(Target.description + " target reached.")
 
 def start(srv):
-	Service = __import__("services."+srv, fromlist=[srv]).service()
-	print ("Trying to start " + Service.description + " service...")
-	for conflict in Service.conflicts:
+	print ("Trying to start " + srv + "...")
+	try:
+		Service = __import__("services."+srv, fromlist=[srv]).service()
+		for conflict in Service.conflicts:
+			for x in services:
+				if conflict == x.__name__:
+					stop(conflict)
+		remaining_dependencies = Service.depends
 		for x in services:
-			if conflict == x.__name__:
-				stop(conflict)
-	remaining_dependencies = Service.depends
-	for x in services:
+			for dependency in remaining_dependencies:
+				if x.__name__ == dependency:
+					remaining_dependencies.remove(dependency)
 		for dependency in remaining_dependencies:
-			if x.__name__ == dependency:
-				remaining_dependencies.remove(dependency)
-	for dependency in remaining_dependencies:
-		start(dependency)
-	Service.start(args)
-	services.append(Service)
-	print (Service.description + " service was started successfully.")
+			start(dependency)
+		Service.start(args)
+		services.append(Service)
+		print (Service.description + " service was started successfully.")
+	except Exception as e:
+		print (srv + "could not be started. (" + str(e) + ")")
 	
 def stop(srv):
 	print ("Trying to stop " + Service.description + " service...")
-
-	for x in services:
-		if x.__name__ == srv:
-			Service = x
-	for x in services:
-		for dependency in x.depends:
-			if dependency == x.__name__:
-				stop(dependency)
-	Service.stop(args)
-	services.remove(Service)
-
-	print (Service.description + " service was stopped successfully.")
+	try:
+		for x in services:
+			if x.__name__ == srv:
+				Service = x
+		for x in services:
+			for dependency in x.depends:
+				if dependency == x.__name__:
+					stop(dependency)
+		Service.stop(args)
+		services.remove(Service)
+		print (Service.description + " service was stopped successfully.")
+	except Exception as e:
+		print (Service.description + " service could not be stopped. (" + str(e) + ")")
 
 
 wanted_target = ""
