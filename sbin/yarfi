@@ -120,4 +120,5 @@ class DBusService(dbus.service.Object):
 		reach_target(target)
 
 reach_target(wanted_target)
+DBusService()
 app.exec_()
