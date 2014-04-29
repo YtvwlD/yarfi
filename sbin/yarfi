@@ -114,7 +114,7 @@ class DBusService(dbus.service.Object):
 		DBusQtMainLoop(set_as_default=True)
 		self.bus = dbus.SystemBus()
 		self.busName = dbus.service.BusName("yarfi.service", bus=self.bus)
-		dbus.service.Object.__init__(self, busName, "/yarfi/service")
+		dbus.service.Object.__init__(self, self.busName, "/yarfi/service")
 	
 	@dbus.service.method("yarfi.service.start", in_signature="s", out_signature=None)
 	def start(self, service):
