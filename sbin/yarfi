@@ -19,7 +19,7 @@
 import os
 import sys
 import subprocess
-from PySide.QtCore import QCoreApplication
+from PySide.QtCore import QCoreApplication, QTimer
 import dbus
 import dbus.service
 from dbus.mainloop.qt import DBusQtMainLoop
@@ -113,21 +113,21 @@ class DBusService(dbus.service.Object):
 	def __init__(self):
 		DBusQtMainLoop(set_as_default=True)
 		self.bus = dbus.SystemBus()
-		self.busName = dbus.service.BusName("yarfi", bus=self.bus)
-		dbus.service.Object.__init__(self, busName, "/yarfi")
+		self.busName = dbus.service.BusName("yarfi.service", bus=self.bus)
+		dbus.service.Object.__init__(self, busName, "/yarfi/service")
 	
-	@dbus.service.method("yarfi.start", in_signature="s", out_signature=None)
+	@dbus.service.method("yarfi.service.start", in_signature="s", out_signature=None)
 	def start(self, service):
 		start(service)
 	
-	@dbus.service.method("yarfi.stop", in_signature="s", out_signature=None)
+	@dbus.service.method("yarfi.service.stop", in_signature="s", out_signature=None)
 	def stop(self, service):
 		stop(service)
 	
-	@dbus.service.method("yarfi.reach_target", in_signature="s", out_signature=None)
+	@dbus.service.method("yarfi.service.reach_target", in_signature="s", out_signature=None)
 	def reach_target(self, target):
 		reach_target(target)
 
 reach_target(wanted_target)
-DBusService()
 app.exec_()
+QTimer.singleShot(5000, DBusService) #wait a few second so that the D-Bus daemon should be ready
