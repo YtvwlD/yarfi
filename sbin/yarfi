@@ -33,6 +33,8 @@ sys.path[0] = "/etc/yarfi"
 app = QCoreApplication(sys.argv)
 
 def reach_target(wanted_target):
+	if debug:
+		print ("Wanted target: " + wanted_target)
 	Target = __import__("targets."+wanted_target, fromlist=[wanted_target]).target()
 	print("Trying to reach "+ Target.description +" target...")
 	for conflict in Target.conflicts:
@@ -70,6 +72,8 @@ def start(srv):
 		print (Service.description + " service was started successfully.")
 	except Exception as e:
 		print (srv + " could not be started. (" + str(e) + ")")
+		if debug: #TODO: This doesn't work as expected.
+			raise
 	
 def stop(srv):
 	print ("Trying to stop " + Service.description + " service...")
@@ -86,9 +90,12 @@ def stop(srv):
 		print (Service.description + " service was stopped successfully.")
 	except Exception as e:
 		print (Service.description + " service could not be stopped. (" + str(e) + ")")
+		if debug: #TODO: This doesn't work as expected.
+			raise
 
 
 wanted_target = ""
+debug = False
 cmdline = open("/proc/cmdline")
 for line in cmdline:
 	params = line.split(" ")
@@ -96,6 +103,8 @@ for line in cmdline:
 		z = x.split("=")
 		if z[0] == "yarfi-target":
 			wanted_target = z[1]
+		if z[0] == "yarfi-debug":
+			debug = True
 cmdline.close()
 if wanted_target == "":
 	wanted_target = "default"
