@@ -33,12 +33,12 @@ class service:
 		passwd = open("/etc/passwd")
 		for line in passwd:
 			if line.startswith("messagebus"):
-				uid = line.split(":")[2]
+				uid = int(line.split(":")[2])
 		passwd.close()
 		group = open("/etc/group")
 		for line in group:
 			if line.startswith("messagebus"):
-				gid = line.split(":")[2]
+				gid = int(line.split(":")[2])
 		group.close()
 		os.chown("/var/run/dbus", uid, gid)
 		
