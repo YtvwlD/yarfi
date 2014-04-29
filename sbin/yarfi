@@ -69,7 +69,7 @@ def start(srv):
 		services.append(Service)
 		print (Service.description + " service was started successfully.")
 	except Exception as e:
-		print (srv + "could not be started. (" + str(e) + ")")
+		print (srv + " could not be started. (" + str(e) + ")")
 	
 def stop(srv):
 	print ("Trying to stop " + Service.description + " service...")
