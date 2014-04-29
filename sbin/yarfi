@@ -129,5 +129,5 @@ class DBusService(dbus.service.Object):
 		reach_target(target)
 
 reach_target(wanted_target)
-app.exec_()
 QTimer.singleShot(5000, DBusService) #wait a few second so that the D-Bus daemon should be ready
+app.exec_()
