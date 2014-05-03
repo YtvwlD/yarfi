@@ -23,8 +23,8 @@ class Service:
 		self.depends = []
 		self.conflicts = ["dbus"]
 		
-	def start(self, args):
+	def start(self):
 		os.execv("/sbin/init", sys.argv)
 	
-	def stop(self, args):
+	def stop(self):
 		pass

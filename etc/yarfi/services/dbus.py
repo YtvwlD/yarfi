@@ -25,7 +25,7 @@ class Service:
 		self.conflicts = []
 		self.respawn = True
 
-	def start(self, args):
+	def start(self):
 		try:
 			os.mkdir("/var/run/dbus")
 		except OSError as e:
@@ -49,7 +49,7 @@ class Service:
 		
 		self.process = subprocess.Popen(["dbus-daemon", "--system"])
 
-	def stop(self, args):
+	def stop(self):
 		self.process.terminate()
 		if self.process.returncode == None:
 			time.sleep(5)

@@ -24,10 +24,10 @@ class Service:
 		self.conflicts = []
 		self.respawn = True
 	
-	def start(self, args):
+	def start(self):
 		self.process = subprocess.Popen(["/sbin/sulogin"])
 	
-	def stop(self, args):
+	def stop(self):
 		self.process.terminate()
 		if self.process.returncode == None:
 			time.sleep(5)
