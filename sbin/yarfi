@@ -36,7 +36,7 @@ def reach_target(wanted_target):
 	if debug:
 		print ("Wanted target: " + wanted_target)
 	target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
-	print("Trying to reach "+ Target.description +" target...")
+	print("Trying to reach "+ target.description +" target...")
 	for conflict in target.conflicts:
 		for srv in services:
 			if conflict == srv.__name__:
