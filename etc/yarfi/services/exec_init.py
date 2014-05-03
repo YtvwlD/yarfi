@@ -13,6 +13,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+
 class Service:
 	def __init__(self):
 		self.description = "execs /sbin/init"
@@ -20,8 +24,6 @@ class Service:
 		self.conflicts = ["dbus"]
 		
 	def start(self, args):
-		os = args["os"]
-		sys = args["sys"]
 		os.execv("/sbin/init", sys.argv)
 	
 	def stop(self, args):

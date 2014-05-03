@@ -13,6 +13,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import subprocess
+import time
+
 class Service:
 	def __init__(self):
 		self.description = "message bus"
@@ -21,8 +26,6 @@ class Service:
 		self.respawn = True
 
 	def start(self, args):
-		os = args["os"]
-		subprocess = args["subprocess"]
 		try:
 			os.mkdir("/var/run/dbus")
 		except OSError as e:
@@ -47,8 +50,6 @@ class Service:
 		self.process = subprocess.Popen(["dbus-daemon", "--system"])
 
 	def stop(self, args):
-		os = args["os"]
-		time = args["time"]
 		self.process.terminate()
 		if self.process.returncode == None:
 			time.sleep(5)

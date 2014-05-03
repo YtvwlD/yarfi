@@ -13,6 +13,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import subprocess
+import time
+
 class Service:
 	def __init__(self):
 		self.description = "Single User Mode"
@@ -21,7 +25,6 @@ class Service:
 		self.respawn = True
 	
 	def start(self, args):
-		subprocess = args["subprocess"]
 		self.process = subprocess.Popen(["/sbin/sulogin"])
 	
 	def stop(self, args):

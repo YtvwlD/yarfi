@@ -16,16 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import sys
-import subprocess
 from PySide.QtCore import QCoreApplication, QTimer
-import dbus
-import dbus.service
-from dbus.mainloop.qt import DBusQtMainLoop
-import time
 
-args = {"os": os, "sys": sys, "subprocess": subprocess, "time": time}
+#yarfi's own
+from yarfi.DBusService import DBusService
 
 services = []
 
@@ -67,7 +62,7 @@ def start(srv):
 					remaining_dependencies.remove(dependency)
 		for dependency in remaining_dependencies:
 			start(dependency)
-		service.start(args)
+		service.start()
 		services.append(service)
 		print (service.description + " service was started successfully.")
 	except Exception as e:
@@ -85,7 +80,7 @@ def stop(srv):
 			for dependency in x.depends:
 				if dependency == x.__name__:
 					stop(dependency)
-		service.stop(args)
+		service.stop()
 		services.remove(Service)
 		print (service.description + " service was stopped successfully.")
 	except Exception as e:
@@ -109,24 +104,6 @@ cmdline.close()
 if wanted_target == "":
 	wanted_target = "default"
 
-class DBusService(dbus.service.Object):
-	def __init__(self):
-		DBusQtMainLoop(set_as_default=True)
-		self.bus = dbus.SystemBus()
-		self.busName = dbus.service.BusName("de.ytvwld.yarfi", bus=self.bus)
-		dbus.service.Object.__init__(self, self.busName, "/yarfi")
-	
-	@dbus.service.method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
-	def start(self, service):
-		start(service)
-	
-	@dbus.service.method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
-	def stop(self, service):
-		stop(service)
-	
-	@dbus.service.method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
-	def reach_target(self, target):
-		reach_target(target)
 
 reach_target(wanted_target)
 QTimer.singleShot(5000, DBusService) #wait a few second so that the D-Bus daemon should be ready
