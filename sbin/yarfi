@@ -35,61 +35,61 @@ app = QCoreApplication(sys.argv)
 def reach_target(wanted_target):
 	if debug:
 		print ("Wanted target: " + wanted_target)
-	Target = __import__("targets."+wanted_target, fromlist=[wanted_target]).target()
+	target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
 	print("Trying to reach "+ Target.description +" target...")
-	for conflict in Target.conflicts:
+	for conflict in target.conflicts:
 		for srv in services:
 			if conflict == srv.__name__:
 				stop(conflict)
-	for trg in Target.depends_targets:
+	for trg in target.depends_targets:
 		reach_target(trg)
-	remaining_dependencies = Target.depends_services
+	remaining_dependencies = target.depends_services
 	for srv in services:
 		for dependency in remaining_dependencies:
 			if srv.__name__ == dependency:
 				remaining_dependencies.remove(dependency)
 	for dependency in remaining_dependencies:
 		start(dependency)
-	print(Target.description + " target reached.")
+	print(target.description + " target reached.")
 
 def start(srv):
 	print ("Trying to start " + srv + "...")
 	try:
-		Service = __import__("services."+srv, fromlist=[srv]).service()
-		for conflict in Service.conflicts:
+		service = __import__("services."+srv, fromlist=[srv]).Service()
+		for conflict in service.conflicts:
 			for x in services:
 				if conflict == x.__name__:
 					stop(conflict)
-		remaining_dependencies = Service.depends
+		remaining_dependencies = service.depends
 		for x in services:
 			for dependency in remaining_dependencies:
 				if x.__name__ == dependency:
 					remaining_dependencies.remove(dependency)
 		for dependency in remaining_dependencies:
 			start(dependency)
-		Service.start(args)
-		services.append(Service)
-		print (Service.description + " service was started successfully.")
+		service.start(args)
+		services.append(service)
+		print (service.description + " service was started successfully.")
 	except Exception as e:
 		print (srv + " could not be started. (" + str(e) + ")")
 		if debug: #TODO: This doesn't work as expected.
 			raise
 	
 def stop(srv):
-	print ("Trying to stop " + Service.description + " service...")
+	print ("Trying to stop " + srv + " service...")
 	try:
 		for x in services:
 			if x.__name__ == srv:
-				Service = x
+				service = x
 		for x in services:
 			for dependency in x.depends:
 				if dependency == x.__name__:
 					stop(dependency)
-		Service.stop(args)
+		service.stop(args)
 		services.remove(Service)
-		print (Service.description + " service was stopped successfully.")
+		print (service.description + " service was stopped successfully.")
 	except Exception as e:
-		print (Service.description + " service could not be stopped. (" + str(e) + ")")
+		print (service.description + " service could not be stopped. (" + str(e) + ")")
 		if debug: #TODO: This doesn't work as expected.
 			raise
 

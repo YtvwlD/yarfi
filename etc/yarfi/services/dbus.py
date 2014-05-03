@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-class service:
+class Service:
 	def __init__(self):
 		self.description = "message bus"
 		self.depends = ["filesystem"]

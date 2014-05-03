@@ -13,7 +13,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-class target:
+class Target:
 	def __init__(self):
 		self.description = "execs /sbin/init"
 		self.depends_targets = []
