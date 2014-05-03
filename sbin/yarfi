@@ -113,18 +113,18 @@ class DBusService(dbus.service.Object):
 	def __init__(self):
 		DBusQtMainLoop(set_as_default=True)
 		self.bus = dbus.SystemBus()
-		self.busName = dbus.service.BusName("yarfi.service", bus=self.bus)
-		dbus.service.Object.__init__(self, self.busName, "/yarfi/service")
+		self.busName = dbus.service.BusName("de.ytvwld.yarfi", bus=self.bus)
+		dbus.service.Object.__init__(self, self.busName, "/yarfi")
 	
-	@dbus.service.method("yarfi.service.start", in_signature="s", out_signature=None)
+	@dbus.service.method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
 	def start(self, service):
 		start(service)
 	
-	@dbus.service.method("yarfi.service.stop", in_signature="s", out_signature=None)
+	@dbus.service.method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
 	def stop(self, service):
 		stop(service)
 	
-	@dbus.service.method("yarfi.service.reach_target", in_signature="s", out_signature=None)
+	@dbus.service.method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
 	def reach_target(self, target):
 		reach_target(target)
 
