@@ -24,12 +24,12 @@ print ("under certain conditions.")
 import sys
 from PySide.QtCore import QCoreApplication, QTimer
 
+sys.path[0] = "/etc/yarfi"
+
 #yarfi's own
 from yarfi.DBusService import DBusService
 
 services = []
-
-sys.path[0] = "/etc/yarfi"
 app = QCoreApplication(sys.argv)
 
 def reach_target(wanted_target):
