@@ -16,6 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+print ("yarfi  Copyright (C) 2014  Niklas Sombert")
+print ("This program comes with ABSOLUTELY NO WARRANTY.")
+print ("This is free software, and you are welcome to redistribute it")
+print ("under certain conditions.")
+
 import sys
 from PySide.QtCore import QCoreApplication, QTimer
 
