@@ -3,7 +3,7 @@ python:
   - "3.3"
   - "2.7"
 virtualenv:
-	system_site_packages: True
+   system_site_packages: True
 before_install:
   - sudo apt-get install -y -qq python-dbus python3-dbus python-pyside.qtcore python3-pyside.qtcore
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
