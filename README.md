@@ -1,6 +1,8 @@
 yarfi
 =====
 
+[![Build Status](https://travis-ci.org/YtvwlD/yarfi.svg?branch=master)](https://travis-ci.org/YtvwlD/yarfi)
+
 Yet Another Replacement For Init - writtten in Python
 
 ---------------------------------
