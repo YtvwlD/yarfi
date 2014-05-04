@@ -5,9 +5,9 @@ python:
 virtualenv:
 	system_site_packages: True
 before_install:
-	- sudo apt-get install -y -qq python-dbus python3-dbus python-pyside.qtcore python3-pyside.qtcore
+  - sudo apt-get install -y -qq python-dbus python3-dbus python-pyside.qtcore python3-pyside.qtcore
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 #install:
 # command to run tests, e.g. python setup.py test
 script:
-	- python sbin/yarfictl help
+  - python sbin/yarfictl help
