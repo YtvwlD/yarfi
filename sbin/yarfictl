@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+
+# YARFI - Yet Another Replacement For Init
+# Copyright (C) 2014 Niklas Sombert
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+print ("yarfictl Copyright (C) 2014  Niklas Sombert")
+print ("This program comes with ABSOLUTELY NO WARRANTY.")
+print ("This is free software, and you are welcome to redistribute it")
+print ("under certain conditions.")
+
+import argparse
+parser = argparse.ArgumentParser(description="This controls a running yarfi daemon via D-Bus.",
+								 epilog="Commands can be:\n * start\n* stop\
+								 * reach_target")
+parser.add_argument("command", help="specify a command (see below)")
+parser.add_argument("argument", help="this can be a service or a target")
+args = parser.parse_args()
+
+from dbus import SystemBus, Interface, DBusException
+import sys
+
+try:
+	bus = SystemBus()
+	remote_object = bus.get_object("de.ytvwld.yarfi", "/yarfi")
+	yarfi = Interface(remote_object, "de.ytvwld.yarfi")
+except DBusException as e:
+	print ("Error: " + str(e))
+	print ("Try:")
+	print (" * Is D-Bus running?")
+	print (" * Is yarfi running?")
+	sys.exit(1)
+
+if args.command == "start":
+	yarfi.start(args.argument)
+
+elif args.command == "stop":
+	yarfi.stop(args.argument)
+
+elif args.command == "reach_target":
+	yarfi.reach_target(args.argument)
+
+else:
+	parser.print_help()
