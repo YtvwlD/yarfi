@@ -23,8 +23,7 @@ print ("under certain conditions.")
 
 import argparse
 parser = argparse.ArgumentParser(description="This controls a running yarfi daemon via D-Bus.",
-								 epilog="Commands can be:\n * start\n* stop\
-								 * reach_target")
+								 epilog="Commands can be:\n * start\n* stop\n * reach_target")
 parser.add_argument("command", help="specify a command (see below)")
 parser.add_argument("argument", help="this can be a service or a target")
 args = parser.parse_args()
