@@ -19,20 +19,21 @@ from dbus.service import BusName, Object, method
 from dbus.mainloop.qt import DBusQtMainLoop
 
 class DBusService(Object):
-	def __init__(self):
+	def __init__(self, yarfi):
 		DBusQtMainLoop(set_as_default=True)
+		self.yarfi = yarfi
 		self.bus = SystemBus()
 		self.busName = BusName("de.ytvwld.yarfi", bus=self.bus)
 		Object.__init__(self, self.busName, "/yarfi")
 	
 	@method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
 	def start(self, service):
-		start(service)
+		self.yarfi.start(service)
 	
 	@method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
 	def stop(self, service):
-		stop(service)
+		self.yarfi.stop(service)
 	
 	@method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
 	def reach_target(self, target):
-		reach_target(target)
+		self.yarfi.reach_target(target)

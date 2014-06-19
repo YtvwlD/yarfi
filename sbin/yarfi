@@ -22,76 +22,13 @@ print ("This is free software, and you are welcome to redistribute it")
 print ("under certain conditions.")
 
 import sys
-from PySide.QtCore import QCoreApplication, QTimer
+from PySide.QtCore import QTimer
 
 sys.path[0] = "/etc/yarfi"
 
 # yarfi's own:
 from yarfi.DBusService import DBusService
-
-services = []
-app = QCoreApplication(sys.argv)
-
-def reach_target(wanted_target):
-	if debug:
-		print ("Wanted target: " + wanted_target)
-	target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
-	print("Trying to reach "+ target.description +" target...")
-	for conflict in target.conflicts:
-		for srv in services:
-			if conflict == srv.__name__:
-				stop(conflict)
-	for trg in target.depends_targets:
-		reach_target(trg)
-	remaining_dependencies = target.depends_services
-	for srv in services:
-		for dependency in remaining_dependencies:
-			if srv.__name__ == dependency:
-				remaining_dependencies.remove(dependency)
-	for dependency in remaining_dependencies:
-		start(dependency)
-	print(target.description + " target reached.")
-
-def start(srv):
-	print ("Trying to start " + srv + "...")
-	try:
-		service = __import__("services."+srv, fromlist=[srv]).Service()
-		for conflict in service.conflicts:
-			for x in services:
-				if conflict == x.__name__:
-					stop(conflict)
-		remaining_dependencies = service.depends
-		for x in services:
-			for dependency in remaining_dependencies:
-				if x.__name__ == dependency:
-					remaining_dependencies.remove(dependency)
-		for dependency in remaining_dependencies:
-			start(dependency)
-		service.start()
-		services.append(service)
-		print (service.description + " service was started successfully.")
-	except Exception as e:
-		print (srv + " could not be started. (" + str(e) + ")")
-		if debug: #TODO: This doesn't work as expected.
-			raise
-
-def stop(srv):
-	print ("Trying to stop " + srv + " service...")
-	try:
-		for x in services:
-			if x.__name__ == srv:
-				service = x
-		for x in services:
-			for dependency in x.depends:
-				if dependency == x.__name__:
-					stop(dependency)
-		service.stop()
-		services.remove(Service)
-		print (service.description + " service was stopped successfully.")
-	except Exception as e:
-		print (service.description + " service could not be stopped. (" + str(e) + ")")
-		if debug: #TODO: This doesn't work as expected.
-			raise
+from yarfi.service import YARFI
 
 wanted_target = ""
 debug = False
@@ -108,6 +45,12 @@ cmdline.close()
 if wanted_target == "":
 	wanted_target = "default"
 
-reach_target(wanted_target)
-QTimer.singleShot(5000, DBusService) #wait a few second so that the D-Bus daemon should be ready
-app.exec_()
+yarfi = YARFI(debug)
+	
+yarfi.reach_target(wanted_target)
+
+def createDBusService():
+	DBusService(yarfi)
+
+QTimer.singleShot(5000, createDBusService) #wait a few second so that the D-Bus daemon should be ready
+yarfi.exec_()
