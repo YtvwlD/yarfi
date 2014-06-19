@@ -29,6 +29,6 @@ class Service:
 	
 	def stop(self):
 		self.process.terminate()
-		if self.process.returncode == None:
+		if self.process.returncode is None:
 			time.sleep(5)
 			self.process.kill()
