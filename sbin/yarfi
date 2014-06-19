@@ -74,7 +74,7 @@ def start(srv):
 		print (srv + " could not be started. (" + str(e) + ")")
 		if debug: #TODO: This doesn't work as expected.
 			raise
-	
+
 def stop(srv):
 	print ("Trying to stop " + srv + " service...")
 	try:
@@ -93,7 +93,6 @@ def stop(srv):
 		if debug: #TODO: This doesn't work as expected.
 			raise
 
-
 wanted_target = ""
 debug = False
 cmdline = open("/proc/cmdline")
@@ -108,7 +107,6 @@ for line in cmdline:
 cmdline.close()
 if wanted_target == "":
 	wanted_target = "default"
-
 
 reach_target(wanted_target)
 QTimer.singleShot(5000, DBusService) #wait a few second so that the D-Bus daemon should be ready
