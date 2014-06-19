@@ -26,7 +26,7 @@ from PySide.QtCore import QCoreApplication, QTimer
 
 sys.path[0] = "/etc/yarfi"
 
-#yarfi's own
+# yarfi's own:
 from yarfi.DBusService import DBusService
 
 services = []
