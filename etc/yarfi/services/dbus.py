@@ -44,9 +44,7 @@ class Service:
 				gid = int(line.split(":")[2])
 		group.close()
 		os.chown("/var/run/dbus", uid, gid)
-		
 		subprocess.Popen(["dbus-uuidgen", "--ensure"]).wait()
-		
 		self.process = subprocess.Popen(["dbus-daemon", "--system"])
 
 	def stop(self):
