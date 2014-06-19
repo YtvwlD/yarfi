@@ -22,7 +22,7 @@ class Service:
 		self.description = "execs /sbin/init"
 		self.depends = []
 		self.conflicts = ["dbus"]
-
+	
 	def start(self):
 		os.execv("/sbin/init", sys.argv)
 	

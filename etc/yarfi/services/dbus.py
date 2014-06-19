@@ -24,7 +24,7 @@ class Service:
 		self.depends = ["filesystem"]
 		self.conflicts = []
 		self.respawn = True
-
+	
 	def start(self):
 		try:
 			os.mkdir("/var/run/dbus")
@@ -46,7 +46,7 @@ class Service:
 		os.chown("/var/run/dbus", uid, gid)
 		subprocess.Popen(["dbus-uuidgen", "--ensure"]).wait()
 		self.process = subprocess.Popen(["dbus-daemon", "--system"])
-
+	
 	def stop(self):
 		self.process.terminate()
 		if self.process.returncode is None:
