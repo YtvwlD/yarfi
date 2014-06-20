@@ -40,32 +40,32 @@ class YARFI:
 			sys.stdout.write(clearline)
 			sys.stdout.write("Targets reached:")
 			for x in self.targets_reached:
-				sys.stdout.write(" " + x)
+				sys.stdout.write(" " + x.__module__.split(".")[1])
 			sys.stdout.write("\n")
 			sys.stdout.write(clearline)
 			sys.stdout.write("Targets needed to reach:")
 			for x in self.targets_needed:
-				sys.stdout.write(" " + x)
+				sys.stdout.write(" " + x.__module__.split(".")[1])
 			sys.stdout.write("\n")
 			sys.stdout.write(clearline)
 			sys.stdout.write("Services running:")
 			for x in self.services_running:
-				sys.stdout.write(" " + x)
+				sys.stdout.write(" " + x.__module__.split(".")[1])
 			sys.stdout.write("\n")
 			sys.stdout.write(clearline)
 			sys.stdout.write("Services starting:")
 			for x in self.services_starting:
-				sys.stdout.write(" " + x)
+				sys.stdout.write(" " + x.__module__.split(".")[1])
 			sys.stdout.write("\n")
 			sys.stdout.write(clearline)
 			sys.stdout.write("Services ready to start:")
 			for x in self.services_needed:
-				sys.stdout.write(" " + x)
+				sys.stdout.write(" " + x.__module__.split(".")[1])
 			sys.stdout.write("\n")
 			sys.stdout.write(clearline)
 			sys.stdout.write("Services remaining:")
 			for x in self.services_needed:
-				sys.stdout.write(" " + x)
+				sys.stdout.write(" " + x.__module__.split(".")[1])
 			sys.stdout.write("\n")
 			sys.stdout.write("-" * cols)
 			sys.stdout.write("\n")
