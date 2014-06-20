@@ -19,7 +19,12 @@ from PySide.QtCore import QCoreApplication
 
 class YARFI:
 	def __init__(self, debug=False):
-		self.services = []
+		self.services_running = []
+		self.services_starting = []
+		self.services_can_start = []
+		self.services_needed = []
+		self.targets_reached = []
+		self.targets_needed = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
 
