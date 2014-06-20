@@ -41,6 +41,7 @@ class YARFI:
 		self.timer.setInterval(self.timer.interval() * 1.25)
 
 	def check_targets_have_dependencies(self):
+		"""checks whether targets have dependencies that have not been imported yet"""
 		# check for targets that are missing
 		for target in self.targets_needed:
 			remaining_dependencies = []
@@ -99,6 +100,7 @@ class YARFI:
 					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
 	def printState(self):
+		"""prints the current state of targets and services"""
 		clearline = "\033[K"
 		with os.popen("tput cols") as tput:
 			cols = int(tput.read())
