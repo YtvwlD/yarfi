@@ -16,7 +16,7 @@
 
 import sys
 import os
-from PySide.QtCore import QCoreApplication
+from PySide.QtCore import QCoreApplication, QTimer
 
 class YARFI:
 	def __init__(self, debug=False):
@@ -28,6 +28,15 @@ class YARFI:
 		self.targets_needed = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
+		self.timer = QTimer()
+		self.timer.timeout.connect(self.check)
+		self.timer.setInterval(250)
+		self.timer.start()
+
+	def check(self):
+		#...
+		self.printState()
+		self.timer.setInterval(self.timer.interval() * 1.25)
 
 	def printState(self):
 		clearline = "\033[K"
