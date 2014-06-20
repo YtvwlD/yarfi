@@ -35,6 +35,7 @@ class YARFI:
 
 	def check(self):
 		self.check_targets_have_dependencies()
+		self.check_services_have_dependencies()
 		#...
 		self.printState()
 		self.timer.setInterval(self.timer.interval() * 1.25)
@@ -75,8 +76,27 @@ class YARFI:
 				for dependency in remaining_dependencies:
 					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
-
-
+	def check_services_have_dependencies(self):
+		"""checks whether services have dependencies that have not been imported yet"""
+		for service in self.services_needed:
+			remaining_dependencies = []
+			for dependency in service.depends:
+				remaining_dependencies.append(dependency)
+			for dependency in remaining_dependencies:
+				for x in self.services_running:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_starting:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_can_start:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_needed:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for dependency in remaining_dependencies:
+					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
 	def printState(self):
 		clearline = "\033[K"
