@@ -36,6 +36,7 @@ class YARFI:
 	def check(self):
 		self.check_targets_have_dependencies()
 		self.check_services_have_dependencies()
+		self.check_targets_have_all_dependencies_met()
 		#...
 		self.printState()
 		self.timer.setInterval(self.timer.interval() * 1.25)
@@ -99,6 +100,25 @@ class YARFI:
 				for dependency in remaining_dependencies:
 					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
+	def check_targets_have_all_dependencies_met(self):
+		"""checks whether all dependencies of a target are met"""
+		for target in self.targets_needed:
+			remaining_dependencies = []
+			for dependency in target.depends_targets:
+				remaining_dependencies.append(dependency)
+			for dependency in target.depends_services:
+				remaining_dependencies.append(dependency)
+			for dependency in remaining_dependencies:
+				for x in self.targets_reached:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_running:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+			if not remaining_dependencies:
+				self.targets_reached.append(target)
+				self.targets_needed.remove(target)
+	
 	def printState(self):
 		"""prints the current state of targets and services"""
 		clearline = "\033[K"
