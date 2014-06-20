@@ -30,7 +30,7 @@ class YARFI:
 		self.debug = debug
 
 	def printState(self):
-			clearline = "\033[K"
+		clearline = "\033[K"
 		with os.popen("tput cols") as tput:
 			cols = int(tput.read())
 		with os.popen("tput sc") as tput:
