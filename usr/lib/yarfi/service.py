@@ -16,7 +16,7 @@
 
 import sys
 import os
-from PySide.QtCore import QCoreApplication, QTimer
+from PySide.QtCore import QCoreApplication, QTimer, QThread
 
 class YARFI:
 	def __init__(self, debug=False):
@@ -38,6 +38,7 @@ class YARFI:
 		self.check_services_have_dependencies()
 		self.check_targets_have_all_dependencies_met()
 		self.check_services_have_all_dependencies_met()
+		self.start_services()
 		#...
 		self.printState()
 		self.timer.setInterval(self.timer.interval() * 1.25)
@@ -133,6 +134,13 @@ class YARFI:
 			if not remaining_dependencies:
 				self.services_can_start.append(service)
 				self.services_needed.remove(service)
+	
+	def start_services(self):
+		"""starts the services that can be started"""
+		for service in self.services_can_start:
+			thread = QThread()
+			thread.run = service.start
+			thread.start()
 	
 	def printState(self):
 		"""prints the current state of targets and services"""
