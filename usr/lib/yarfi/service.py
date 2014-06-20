@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import os
 from PySide.QtCore import QCoreApplication
 
 class YARFI:
@@ -27,6 +28,50 @@ class YARFI:
 		self.targets_needed = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
+
+	def printState(self):
+			clearline = "\033[K"
+		with os.popen("tput cols") as tput:
+			cols = int(tput.read())
+		with os.popen("tput sc") as tput:
+			sys.stdout.write(tput.read())
+		with os.popen("tput cup 0 0") as tput:
+			sys.stdout.write(tput.read())
+			sys.stdout.write(clearline)
+			sys.stdout.write("Targets reached:")
+			for x in self.targets_reached:
+				sys.stdout.write(" " + x)
+			sys.stdout.write("\n")
+			sys.stdout.write(clearline)
+			sys.stdout.write("Targets needed to reach:")
+			for x in self.targets_needed:
+				sys.stdout.write(" " + x)
+			sys.stdout.write("\n")
+			sys.stdout.write(clearline)
+			sys.stdout.write("Services running:")
+			for x in self.services_running:
+				sys.stdout.write(" " + x)
+			sys.stdout.write("\n")
+			sys.stdout.write(clearline)
+			sys.stdout.write("Services starting:")
+			for x in self.services_starting:
+				sys.stdout.write(" " + x)
+			sys.stdout.write("\n")
+			sys.stdout.write(clearline)
+			sys.stdout.write("Services ready to start:")
+			for x in self.services_needed:
+				sys.stdout.write(" " + x)
+			sys.stdout.write("\n")
+			sys.stdout.write(clearline)
+			sys.stdout.write("Services remaining:")
+			for x in self.services_needed:
+				sys.stdout.write(" " + x)
+			sys.stdout.write("\n")
+			sys.stdout.write("-" * cols)
+			sys.stdout.write("\n")
+		with os.popen("tput rc") as tput:
+			sys.stdout.write(tput.read())
+			sys.stdout.flush()
 
 	def reach_target(self, wanted_target):
 		if self.debug:
