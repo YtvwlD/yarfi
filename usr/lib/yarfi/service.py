@@ -34,9 +34,49 @@ class YARFI:
 		self.timer.start()
 
 	def check(self):
+		self.check_targets_have_dependencies()
 		#...
 		self.printState()
 		self.timer.setInterval(self.timer.interval() * 1.25)
+
+	def check_targets_have_dependencies(self):
+		# check for targets that are missing
+		for target in self.targets_needed:
+			remaining_dependencies = []
+			for dependency in target.depends_targets:
+				remaining_dependencies.append(dependency)
+			for dependency in remaining_dependencies:
+				for x in self.targets_reached:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.targets_needed:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+			for dependency in remaining_dependencies:
+				self.targets_needed.append(__import__("targets."+dependency, fromlist=[dependency]).Target())
+		# check for services that are missing
+		for target in self.targets_needed:
+			remaining_dependencies = []
+			for dependency in target.depends_services:
+				remaining_dependencies.append(dependency)
+			for dependency in remaining_dependencies:
+				for x in self.services_running:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_starting:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_can_start:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for x in self.services_needed:
+					if x.__module__.split(".")[1] == dependency:
+						remaining_dependencies.remove(dependency)
+				for dependency in remaining_dependencies:
+					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
+
+
+
 
 	def printState(self):
 		clearline = "\033[K"
