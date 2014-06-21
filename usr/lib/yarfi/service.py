@@ -1,4 +1,4 @@
-# YARFI - Yet Another Replacement For Init
+﻿# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,8 @@
 
 import sys
 import os
-from PySide.QtCore import QCoreApplication, QTimer, QThread
+from PySide.QtCore import QCoreApplication, QTimer
+from yarfi.ServiceThread import ServiceThread
 
 class YARFI:
 	def __init__(self, debug=False):
@@ -138,9 +139,7 @@ class YARFI:
 	def start_services(self):
 		"""starts the services that can be started"""
 		for service in self.services_can_start:
-			thread = QThread()
-			thread.run = service.start
-			thread.start()
+			ServiceThread(service, "start").start()
 	
 	def printState(self):
 		"""prints the current state of targets and services"""
