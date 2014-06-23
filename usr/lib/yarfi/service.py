@@ -212,12 +212,12 @@ class YARFI:
 			service = __import__("services."+srv, fromlist=[srv]).Service()
 			for conflict in service.conflicts:
 				for x in self.services:
-					if conflict == x.__name__:
+					if conflict == x.__module__.split(".")[1]:
 						self.stop(conflict)
 			remaining_dependencies = service.depends
 			for x in self.services:
 				for dependency in remaining_dependencies:
-					if x.__name__ == dependency:
+					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.start(dependency)
@@ -233,11 +233,11 @@ class YARFI:
 		print ("Trying to stop " + srv + " service...")
 		try:
 			for x in self.services:
-				if x.__name__ == srv:
+				if x.__module__.split(".")[1] == srv:
 					service = x
 			for x in self.services:
 				for dependency in x.depends:
-					if dependency == x.__name__:
+					if dependency == x.__module__.split(".")[1]:
 						self.stop(dependency)
 			service.stop()
 			self.services.remove(service)
