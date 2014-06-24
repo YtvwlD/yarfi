@@ -21,7 +21,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "message bus"
-		self.depends = ["filesystem"]
+		self.depends = []
 		self.conflicts = []
 		self.respawn = True
 	
