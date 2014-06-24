@@ -151,6 +151,8 @@ class YARFI:
 		"""starts the services that can be started"""
 		for service in self.services["can_start"]:
 			ServiceThread(service, "start").start()
+			self.services["can_start"].remove(service)
+			self.services["starting"].append(service)
 	
 	def stop_services(self):
 		"""stops the services that can be stopped"""
