@@ -41,12 +41,23 @@ class YARFI:
 		self.timer.setInterval(250)
 		self.timer.start()
 
+	def printDebug(self, msg):
+		if self.debug:
+			print (msg)
+
 	def check(self):
+		self.printDebug("timeout - " + str(self.timer.interval()))
+		self.printDebug("Checking whether targets have dependencies that have not been imported yet...")
 		self.check_targets_have_dependencies()
+		self.printDebug("Checking whether services have dependencies that have not been imported yet...")
 		self.check_services_have_dependencies()
+		self.printDebug("Checking whether a target is reached...")
 		self.check_targets_are_reached()
+		self.printDebug("Checking whether a service can start...")
 		self.check_services_can_start()
+		self.printDebug("Starting the services that can be started...")
 		self.start_services()
+		self.printDebug("Stopping the services that can be stopped...")
 		self.stop_services()
 		self.check_services_status_has_changed()
 		#...
@@ -57,6 +68,7 @@ class YARFI:
 		"""checks whether targets have dependencies that have not been imported yet"""
 		# check for targets that are missing
 		for target in self.targets["to_reach"]:
+			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
 			remaining_dependencies = []
 			for dependency in target.depends_targets:
 				remaining_dependencies.append(dependency)
@@ -66,9 +78,11 @@ class YARFI:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
+				self.printDebug("Importing " + dependency + "...")
 				self.targets["to_reach"].append(__import__("targets."+dependency, fromlist=[dependency]).Target())
 		# check for services that are missing
 		for target in self.targets["to_reach"]:
+			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
 			remaining_dependencies = []
 			for dependency in target.depends_services:
 				remaining_dependencies.append(dependency)
@@ -78,11 +92,13 @@ class YARFI:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
 				for dependency in remaining_dependencies:
+					self.printDebug("Importing " + dependency + "...")
 					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
 	def check_services_have_dependencies(self):
 		"""checks whether services have dependencies that have not been imported yet"""
 		for service in self.services["to_start"]:
+			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
 			remaining_dependencies = []
 			for dependency in service.depends:
 				remaining_dependencies.append(dependency)
@@ -92,11 +108,13 @@ class YARFI:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
 				for dependency in remaining_dependencies:
+					self.printDebug("Importing " + dependency + "...")
 					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 	
 	def check_targets_are_reached(self):
 		"""checks whether a target is reached"""
 		for target in self.targets["to_reach"]:
+			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
 			remaining_dependencies = []
 			for dependency in target.depends_targets:
 				remaining_dependencies.append(dependency)
@@ -121,12 +139,16 @@ class YARFI:
 				if not isFound:
 					remaining_conflicts.remove(conflict)
 			if not remaining_dependencies and not remaining_conflicts:
+				self.printDebug(target.__module__.split(".")[1] + " is reached.")
 				self.targets["reached"].append(target)
 				self.targets["to_reach"].remove(target)
+			else:
+				self.printDebug(target.__module__.split(".")[1] + " is not reached.")
 	
 	def check_services_can_start(self):
 		"""checks whether a service can start"""
 		for service in self.services["to_start"]:
+			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
 			remaining_dependencies = []
 			for dependency in service.depends:
 				remaining_dependencies.append(dependency)
@@ -146,12 +168,16 @@ class YARFI:
 				if not isFound:
 					remaining_conflicts.remove(conflict)
 			if not remaining_dependencies and not remaining_conflicts:
+				self.printDebug(service.__module__.split(".")[1] + " can start.")
 				self.services["can_start"].append(service)
 				self.services["to_start"].remove(service)
+			else:
+				self.printDebug(service.__module__.split(".")[1] + " can't start.")
 	
 	def start_services(self):
 		"""starts the services that can be started"""
 		for service in self.services["can_start"]:
+			self.printDebug("Starting " + service.__module__.split(".")[1] + "...")
 			ServiceThread(self, service, "start").start()
 			self.services["can_start"].remove(service)
 			self.services["starting"].append(service)
@@ -159,6 +185,7 @@ class YARFI:
 	def stop_services(self):
 		"""stops the services that can be stopped"""
 		for service in self.services["can_shut_down"]:
+			self.printDebug("Stopping " + service.__module__.split(".")[1] + "...")
 			ServiceThread(self, service, "stop").start()
 			self.services["can_shut_down"].remove(service)
 			self.services["shutting_down"].append(service)
@@ -167,9 +194,11 @@ class YARFI:
 		"""checks whether the status of a service has changed"""
 		for status in ["starting", "shutting_down"]: #TODO: check every status
 			for service in self.services[status]:
+				self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
 				ServiceThread(self, service, "status").start()
 
 	def service_status_has_changed(self, service, status):
+		self.printDebug("The status of " + service.__module__.split(".")[1] + " has changed to '" + status + "'.")
 		if status == "running":
 			self.services["running"].append(service)
 			self.services["starting"].remove(service)
@@ -204,10 +233,9 @@ class YARFI:
 			sys.stdout.flush()
 
 	def reach_target(self, wanted_target):
-		if self.debug:
-			print ("Wanted target: " + wanted_target)
+		self.printDebug ("Wanted target: " + wanted_target)
 		target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
-		print("Trying to reach "+ target.description +" target...")
+		self.printDebug("Trying to reach "+ target.description +" target...")
 		for conflict in target.conflicts:
 			for status in ["running", "starting", "to_start"]:
 				for x in self.services[status]:
@@ -216,10 +244,10 @@ class YARFI:
 		for trg in target.depends_targets:
 			self.reach_target(trg)
 		self.targets["to_reach"].append(target)
-		print(target.description + " target is queued to be reached.")
+		self.printDebug(target.description + " target is queued to be reached.")
 
 	def start(self, srv):
-		print ("Trying to start " + srv + "...")
+		self.printDebug ("Trying to start " + srv + "...")
 		try:
 			service = __import__("services."+srv, fromlist=[srv]).Service()
 			self.services["to_start"].append(service)
@@ -228,14 +256,14 @@ class YARFI:
 					for x in self.services[status]:
 						if conflict == x.__module__.split(".")[1]:
 							self.stop(conflict)
-			print (service.description + " service is queued to start.")
+			self.printDebug (service.description + " service is queued to start.")
 		except Exception as e:
-			print (srv + " could not be started. (" + str(e) + ")")
+			self.printDebug (srv + " could not be started. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
 				raise
 
 	def stop(self, srv):
-		print ("Trying to stop " + srv + " service...")
+		self.printDebug ("Trying to stop " + srv + " service...")
 		try:
 			for status in self.services:
 				for x in self.services[status]:
@@ -247,9 +275,9 @@ class YARFI:
 						if dependency == service.__module__.split(".")[1]:
 							self.stop(x)
 			self.services["to_shut_down"].append(service)
-			print (service.description + " service is queued to be stopped.")
+			self.printDebug (service.description + " service is queued to be stopped.")
 		except Exception as e:
-			print (service.description + " service could not be stopped. (" + str(e) + ")")
+			self.printDebug (service.description + " service could not be stopped. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
 				raise
 

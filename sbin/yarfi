@@ -32,8 +32,9 @@ from yarfi.service import YARFI
 
 wanted_target = ""
 debug = False
-cmdline = open("/proc/cmdline")
-for line in cmdline:
+with open("/proc/cmdline") as cmdline:
+	line = cmdline.read()
+	line = line.replace("\n", "")
 	params = line.split(" ")
 	for x in params:
 		z = x.split("=")
@@ -41,11 +42,11 @@ for line in cmdline:
 			wanted_target = z[1]
 		if z[0] == "yarfi-debug":
 			debug = True
-cmdline.close()
+
 if wanted_target == "":
 	wanted_target = "default"
 
-yarfi = YARFI(debug)
+yarfi = YARFI(debug=debug)
 	
 yarfi.reach_target(wanted_target)
 
