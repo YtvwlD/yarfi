@@ -44,9 +44,10 @@ class YARFI:
 	def check(self):
 		self.check_targets_have_dependencies()
 		self.check_services_have_dependencies()
-		self.check_targets_have_all_dependencies_met()
-		self.check_services_have_all_dependencies_met()
+		self.check_targets_are_reached()
+		self.check_services_can_start()
 		self.start_services()
+		self.stop_services()
 		#...
 		self.printState()
 		self.timer.setInterval(self.timer.interval() * 1.25)
@@ -122,7 +123,7 @@ class YARFI:
 				self.targets["reached"].append(target)
 				self.targets["to_reach"].remove(target)
 	
-	def check_services_have_all_dependencies_met(self):
+	def check_services_can_start(self):
 		"""checks whether a service can start"""
 		for service in self.services["to_start"]:
 			remaining_dependencies = []
