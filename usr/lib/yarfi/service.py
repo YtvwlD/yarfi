@@ -54,7 +54,7 @@ class YARFI:
 	def check_targets_have_dependencies(self):
 		"""checks whether targets have dependencies that have not been imported yet"""
 		# check for targets that are missing
-		for target in self.targets_needed:
+		for target in self.targets["to_reach"]:
 			remaining_dependencies = []
 			for dependency in target.depends_targets:
 				remaining_dependencies.append(dependency)
@@ -64,7 +64,7 @@ class YARFI:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
-				self.targets_needed.append(__import__("targets."+dependency, fromlist=[dependency]).Target())
+				self.targets["to_reach"].append(__import__("targets."+dependency, fromlist=[dependency]).Target())
 		# check for services that are missing
 		for target in self.targets["to_reach"]:
 			remaining_dependencies = []
