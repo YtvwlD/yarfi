@@ -194,19 +194,14 @@ class YARFI:
 		target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
 		print("Trying to reach "+ target.description +" target...")
 		for conflict in target.conflicts:
-			for srv in self.services:
-				if conflict == srv.__module__.split(".")[1]:
-					self.stop(conflict)
+			for status in ["running", "starting", "to_start"]:
+				for x in self.services[status]:
+					if conflict == x.__module__.split(".")[1]:
+						self.stop(conflict)
 		for trg in target.depends_targets:
 			self.reach_target(trg)
-		remaining_dependencies = target.depends_services
-		for srv in self.services:
-			for dependency in remaining_dependencies:
-				if srv.__module__.split(".")[1] == dependency:
-					remaining_dependencies.remove(dependency)
-		for dependency in remaining_dependencies:
-			self.start(dependency)
-		print(target.description + " target reached.")
+		self.targets["to_reach"].append(target)
+		print(target.description + " target is queued to be reached.")
 
 	def start(self, srv):
 		print ("Trying to start " + srv + "...")
