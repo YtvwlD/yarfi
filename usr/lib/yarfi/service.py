@@ -122,7 +122,7 @@ class YARFI:
 				self.targets["to_reach"].remove(target)
 	
 	def check_services_have_all_dependencies_met(self):
-		"""checks whether all dependencies of a service are met"""
+		"""checks whether a service can start"""
 		for service in self.services["to_start"]:
 			remaining_dependencies = []
 			for dependency in service.depends:
@@ -131,7 +131,18 @@ class YARFI:
 				for x in self.services["running"]:
 					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
-			if not remaining_dependencies:
+			remaining_conflicts = []
+			for conflict in service.conflicts:
+				remaining_conflicts.append(conflict)
+			for conflict in remaining_conflicts:
+				isFound = False
+				for status in ["running", "starting", "to_start"]:
+					for x in self.services[status]:
+						if x.__module__.split(".")[1] == conflict:
+							isFound = True
+				if not isFound:
+					remaining_conflicts.remove(conflict)
+			if not remaining_dependencies and not remaining_conflicts:
 				self.services["can_start"].append(service)
 				self.services["to_start"].remove(service)
 	
