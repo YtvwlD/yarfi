@@ -14,11 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PySide.QtCore import QThread
+from threading import Thread
 
-class ServiceThread(QThread):
+class ServiceThread(Thread):
 	def __init__(self, service, action):
-		QThread.__init__(self)
+		Thread.__init__(self)
 		self.service = service
 		self.action = action
 	
