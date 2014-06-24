@@ -48,6 +48,7 @@ class YARFI:
 		self.check_services_can_start()
 		self.start_services()
 		self.stop_services()
+		self.check_services_status_has_changed()
 		#...
 		self.printState()
 		self.timer.setInterval(self.timer.interval() * 1.25)
