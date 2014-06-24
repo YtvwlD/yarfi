@@ -180,20 +180,13 @@ class YARFI:
 		print ("Trying to start " + srv + "...")
 		try:
 			service = __import__("services."+srv, fromlist=[srv]).Service()
+			self.services["to_start"].append(service)
 			for conflict in service.conflicts:
-				for x in self.services:
-					if conflict == x.__module__.split(".")[1]:
-						self.stop(conflict)
-			remaining_dependencies = service.depends
-			for x in self.services:
-				for dependency in remaining_dependencies:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-			for dependency in remaining_dependencies:
-				self.start(dependency)
-			service.start()
-			self.services.append(service)
-			print (service.description + " service was started successfully.")
+				for status in ["running", "starting", "to_start"]:
+					for x in self.services[status]:
+						if conflict == x.__module__.split(".")[1]:
+							self.stop(conflict)
+			print (service.description + " service is queued to start.")
 		except Exception as e:
 			print (srv + " could not be started. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
