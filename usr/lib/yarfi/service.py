@@ -1,4 +1,4 @@
-﻿# YARFI - Yet Another Replacement For Init
+# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,18 @@ from yarfi.ServiceThread import ServiceThread
 
 class YARFI:
 	def __init__(self, debug=False):
-		self.services_running = []
-		self.services_starting = []
-		self.services_can_start = []
-		self.services_needed = []
-		self.targets_reached = []
-		self.targets_needed = []
+		# a service can be: running, starting, can_start, to_start, shutting_down, to_shut_down
+		self.services = {}
+		self.services["running"] = []
+		self.services["starting"] = []
+		self.services["can_start"] = []
+		self.services["to_start"] = []
+		self.services["shutting_down"] = []
+		self.services["to_shut_down"] = []
+		# a target can be: reached, to_reach
+		self.targets = {}
+		self.targets["reached"] = []
+		self.targets["to_reach"] = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
 		self.timer = QTimer()
@@ -52,70 +58,52 @@ class YARFI:
 			for dependency in target.depends_targets:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for x in self.targets_reached:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.targets_needed:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
+				for status in ["reached", "to_reach"]:
+					for x in self.targets[status]:
+						if x.__module__.split(".")[1] == dependency:
+							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.targets_needed.append(__import__("targets."+dependency, fromlist=[dependency]).Target())
 		# check for services that are missing
-		for target in self.targets_needed:
+		for target in self.targets["to_reach"]:
 			remaining_dependencies = []
 			for dependency in target.depends_services:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for x in self.services_running:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services_starting:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services_can_start:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services_needed:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
+				for status in ["running", "starting", "to_start"]:
+					for x in self.services[status]:
+						if x.__module__.split(".")[1] == dependency:
+							remaining_dependencies.remove(dependency)
 				for dependency in remaining_dependencies:
-					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
+					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
 	def check_services_have_dependencies(self):
 		"""checks whether services have dependencies that have not been imported yet"""
-		for service in self.services_needed:
+		for service in self.services["to_start"]:
 			remaining_dependencies = []
 			for dependency in service.depends:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for x in self.services_running:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services_starting:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services_can_start:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services_needed:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
+				for status in ["running", "starting", "to_start"]:
+					for x in self.services[status]:
+						if x.__module__.split(".")[1] == dependency:
+							remaining_dependencies.remove(dependency)
 				for dependency in remaining_dependencies:
-					self.services_needed.append(__import__("services."+dependency, fromlist=[dependency]).Service())
+					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 	
 	def check_targets_have_all_dependencies_met(self):
 		"""checks whether all dependencies of a target are met"""
-		for target in self.targets_needed:
+		for target in self.targets["to_reach"]:
 			remaining_dependencies = []
 			for dependency in target.depends_targets:
 				remaining_dependencies.append(dependency)
 			for dependency in target.depends_services:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for x in self.targets_reached:
+				for x in self.targets["reached"]:
 					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
-				for x in self.services_running:
+				for x in self.services["running"]:
 					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
 			if not remaining_dependencies:
@@ -124,21 +112,21 @@ class YARFI:
 	
 	def check_services_have_all_dependencies_met(self):
 		"""checks whether all dependencies of a service are met"""
-		for service in self.services_needed:
+		for service in self.services["to_start"]:
 			remaining_dependencies = []
 			for dependency in service.depends:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for x in self.services_running:
+				for x in self.services["running"]:
 					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
 			if not remaining_dependencies:
-				self.services_can_start.append(service)
-				self.services_needed.remove(service)
+				self.services["can_start"].append(service)
+				self.services["to_start"].remove(service)
 	
 	def start_services(self):
 		"""starts the services that can be started"""
-		for service in self.services_can_start:
+		for service in self.services["can_start"]:
 			ServiceThread(service, "start").start()
 	
 	def printState(self):
@@ -150,36 +138,18 @@ class YARFI:
 			sys.stdout.write(tput.read())
 		with os.popen("tput cup 0 0") as tput:
 			sys.stdout.write(tput.read())
-			sys.stdout.write(clearline)
-			sys.stdout.write("Targets reached:")
-			for x in self.targets_reached:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
-			sys.stdout.write("\n")
-			sys.stdout.write(clearline)
-			sys.stdout.write("Targets needed to reach:")
-			for x in self.targets_needed:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
-			sys.stdout.write("\n")
-			sys.stdout.write(clearline)
-			sys.stdout.write("Services running:")
-			for x in self.services_running:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
-			sys.stdout.write("\n")
-			sys.stdout.write(clearline)
-			sys.stdout.write("Services starting:")
-			for x in self.services_starting:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
-			sys.stdout.write("\n")
-			sys.stdout.write(clearline)
-			sys.stdout.write("Services ready to start:")
-			for x in self.services_needed:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
-			sys.stdout.write("\n")
-			sys.stdout.write(clearline)
-			sys.stdout.write("Services remaining:")
-			for x in self.services_needed:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
-			sys.stdout.write("\n")
+			for status in self.targets:
+				sys.stdout.write(clearline)
+				sys.stdout.write("Targets " + status + ":")
+				for x in self.targets[status]:
+					sys.stdout.write(" " + x.__module__.split(".")[1])
+				sys.stdout.write("\n")
+			for status in self.services:
+				sys.stdout.write(clearline)
+				sys.stdout.write("Services " + status + ":")
+				for x in self.services[status]:
+					sys.stdout.write(" " + x.__module__.split(".")[1])
+				sys.stdout.write("\n")
 			sys.stdout.write("-" * cols)
 			sys.stdout.write("\n")
 		with os.popen("tput rc") as tput:
