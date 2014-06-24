@@ -21,7 +21,7 @@ from yarfi.ServiceThread import ServiceThread
 
 class YARFI:
 	def __init__(self, debug=False):
-		# a service can be: running, starting, can_start, to_start, shutting_down, to_shut_down
+		# a service can be: running, starting, can_start, to_start, shutting_down, to_shut_down, can_shut_down
 		self.services = {}
 		self.services["running"] = []
 		self.services["starting"] = []
@@ -29,6 +29,7 @@ class YARFI:
 		self.services["to_start"] = []
 		self.services["shutting_down"] = []
 		self.services["to_shut_down"] = []
+		self.services["can_shut_down"] = []
 		# a target can be: reached, to_reach
 		self.targets = {}
 		self.targets["reached"] = []
@@ -151,6 +152,13 @@ class YARFI:
 		for service in self.services["can_start"]:
 			ServiceThread(service, "start").start()
 	
+	def stop_services(self):
+		"""stops the services that can be stopped"""
+		for service in self.services["can_shut_down"]:
+			ServiceThread(service, "stop").start()
+			self.services["can_shut_down"].remove(service)
+			self.services["shutting_down"].append(service)
+
 	def printState(self):
 		"""prints the current state of targets and services"""
 		clearline = "\033[K"
