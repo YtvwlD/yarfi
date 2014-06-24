@@ -38,12 +38,16 @@ class YARFI:
 		self.debug = debug
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.check)
-		self.timer.setInterval(250)
-		self.timer.start()
+		self.delimiter = "- "
 
 	def printDebug(self, msg):
 		if self.debug:
 			print (msg)
+
+	def startTimer(self):
+		if not self.timer.isActive():
+			self.timer.setInterval(250)
+			self.timer.start()
 
 	def check(self):
 		self.printDebug("timeout - " + str(self.timer.interval()))
@@ -61,8 +65,14 @@ class YARFI:
 		self.stop_services()
 		self.check_services_status_has_changed()
 		#...
+		self.printDebug("Checking if there's anything left to do...")
+		if not self.targets["to_reach"] and not self.services["starting"] and not self.services["can_start"] and not self.services["to_start"] and not self.services["shutting_down"] and not self.services["to_shut_down"]:
+			self.printDebug("Nothing left to do. Sleeping...")
+			self.timer.stop()
+		else:
+			self.printDebug("Something left to do. Continuing...")
+			self.timer.setInterval(self.timer.interval() * 1.25)
 		self.printState()
-		self.timer.setInterval(self.timer.interval() * 1.25)
 
 	def check_targets_have_dependencies(self):
 		"""checks whether targets have dependencies that have not been imported yet"""
@@ -226,7 +236,8 @@ class YARFI:
 				for x in self.services[status]:
 					sys.stdout.write(" " + x.__module__.split(".")[1])
 				sys.stdout.write("\n")
-			sys.stdout.write("-" * cols)
+			sys.stdout.write(self.delimiter * (cols/2))
+			self.delimiter = self.delimiter[1] + self.delimiter[0]
 			sys.stdout.write("\n")
 		with os.popen("tput rc") as tput:
 			sys.stdout.write(tput.read())
@@ -244,6 +255,7 @@ class YARFI:
 		for trg in target.depends_targets:
 			self.reach_target(trg)
 		self.targets["to_reach"].append(target)
+		self.startTimer()
 		self.printDebug(target.description + " target is queued to be reached.")
 
 	def start(self, srv):
@@ -256,6 +268,7 @@ class YARFI:
 					for x in self.services[status]:
 						if conflict == x.__module__.split(".")[1]:
 							self.stop(conflict)
+			self.startTimer()
 			self.printDebug (service.description + " service is queued to start.")
 		except Exception as e:
 			self.printDebug (srv + " could not be started. (" + str(e) + ")")
@@ -275,6 +288,7 @@ class YARFI:
 						if dependency == service.__module__.split(".")[1]:
 							self.stop(x)
 			self.services["to_shut_down"].append(service)
+			self.startTimer()
 			self.printDebug (service.description + " service is queued to be stopped.")
 		except Exception as e:
 			self.printDebug (service.description + " service could not be stopped. (" + str(e) + ")")
