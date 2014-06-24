@@ -91,8 +91,8 @@ class YARFI:
 				for dependency in remaining_dependencies:
 					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 	
-	def check_targets_have_all_dependencies_met(self):
-		"""checks whether all dependencies of a target are met"""
+	def check_targets_are_reached(self):
+		"""checks whether a target is reached"""
 		for target in self.targets["to_reach"]:
 			remaining_dependencies = []
 			for dependency in target.depends_targets:
@@ -106,9 +106,20 @@ class YARFI:
 				for x in self.services["running"]:
 					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
-			if not remaining_dependencies:
-				self.targets_reached.append(target)
-				self.targets_needed.remove(target)
+			remaining_conflicts = []
+			for conflict in target.conflicts:
+				remaining_conflicts.append(conflict)
+			for conflict in remaining_conflicts:
+				isFound = False
+				for status in ["running", "starting", "to_start"]:
+					for x in self.services[status]:
+						if x.__module__.split(".")[1] == conflict:
+							isFound = True
+				if not isFound:
+					remaining_conflicts.remove(conflict)
+			if not remaining_dependencies and not remaining_conflicts:
+				self.targets["reached"].append(target)
+				self.targets["to_reach"].remove(target)
 	
 	def check_services_have_all_dependencies_met(self):
 		"""checks whether all dependencies of a service are met"""
