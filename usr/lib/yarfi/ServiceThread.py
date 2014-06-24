@@ -1,4 +1,4 @@
-﻿# YARFI - Yet Another Replacement For Init
+# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@ from PySide.QtCore import QThread
 
 class ServiceThread(QThread):
 	def __init__(self, service, action):
+		QThread.__init__(self)
 		self.service = service
 		self.action = action
 	
