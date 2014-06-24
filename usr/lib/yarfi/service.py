@@ -195,16 +195,17 @@ class YARFI:
 	def stop(self, srv):
 		print ("Trying to stop " + srv + " service...")
 		try:
-			for x in self.services:
-				if x.__module__.split(".")[1] == srv:
-					service = x
-			for x in self.services:
-				for dependency in x.depends:
-					if dependency == x.__module__.split(".")[1]:
-						self.stop(dependency)
-			service.stop()
-			self.services.remove(service)
-			print (service.description + " service was stopped successfully.")
+			for status in self.services:
+				for x in self.services[status]:
+					if x.__module__.split(".")[1] == srv:
+						service = x
+			for status in ["running", "starting", "to_start"]:
+				for x in self.services[status]:
+					for dependency in x.depends:
+						if dependency == service.__module__.split(".")[1]:
+							self.stop(x)
+			self.services["to_shut_down"].append(service)
+			print (service.description + " service is queued to be stopped.")
 		except Exception as e:
 			print (service.description + " service could not be stopped. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
