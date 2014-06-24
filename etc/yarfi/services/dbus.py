@@ -28,6 +28,7 @@ class Service:
 		self.depends = []
 		self.conflicts = []
 		self.respawn = True
+		self.process = None
 	
 	def start(self):
 		try:
@@ -59,11 +60,12 @@ class Service:
 		os.remove("/var/run/dbus/pid")
 
 	def status(self):
-		if self.process.returncode is None:
-			try:
-				SystemBus()
-				return ("running")
-			except DBusException:
-				return ("starting")
-		else:
-			return ("stopped")
+		if self.process:
+			if self.process.returncode is None:
+				try:
+					SystemBus()
+					return ("running")
+				except DBusException:
+					return ("starting")
+			else:
+				return ("stopped")
