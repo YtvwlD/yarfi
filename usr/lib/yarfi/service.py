@@ -151,16 +151,29 @@ class YARFI:
 	def start_services(self):
 		"""starts the services that can be started"""
 		for service in self.services["can_start"]:
-			ServiceThread(service, "start").start()
+			ServiceThread(self, service, "start").start()
 			self.services["can_start"].remove(service)
 			self.services["starting"].append(service)
 	
 	def stop_services(self):
 		"""stops the services that can be stopped"""
 		for service in self.services["can_shut_down"]:
-			ServiceThread(service, "stop").start()
+			ServiceThread(self, service, "stop").start()
 			self.services["can_shut_down"].remove(service)
 			self.services["shutting_down"].append(service)
+
+	def check_services_status_has_changed(self):
+		"""checks whether the status of a service has changed"""
+		for status in ["starting", "shutting_down"]: #TODO: check every status
+			for service in self.services[status]:
+				ServiceThread(self, service, "status").start()
+
+	def service_status_has_changed(self, service, status):
+		if status == "running":
+			self.services["running"].append(service)
+			self.services["starting"].remove(service)
+		elif status == "stopped": #TODO: Handle crashes and respawn
+			self.services["shutting_down"].remove(service)
 
 	def printState(self):
 		"""prints the current state of targets and services"""

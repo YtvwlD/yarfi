@@ -28,3 +28,6 @@ class Service:
 	
 	def stop(self):
 		pass
+
+	def status(self):
+		pass

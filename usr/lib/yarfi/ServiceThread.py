@@ -17,10 +17,18 @@
 from threading import Thread
 
 class ServiceThread(Thread):
-	def __init__(self, service, action):
+	def __init__(self, yarfi, service, action):
 		Thread.__init__(self)
 		self.service = service
 		self.action = action
+		self.yarfi = yarfi
 	
 	def run(self):
-		exec("self.service."+self.action+"()")
+		if self.action == "status":
+			status = self.service.status()
+			if status == "running":
+				self.yarfi.service_status_has_changed(self.service, status)
+			if status == "stopped":
+				self.yarfi.service_status_has_changed(self.service, status)
+		else:
+			exec("self.service."+self.action+"()")

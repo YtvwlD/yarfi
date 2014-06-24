@@ -32,3 +32,9 @@ class Service:
 		if self.process.returncode is None:
 			time.sleep(5)
 			self.process.kill()
+
+	def status(self):
+		if self.process.returncode is None:
+			return ("running")
+		else:
+			return ("stopped")
