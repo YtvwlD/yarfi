@@ -123,37 +123,41 @@ class YARFI:
 	
 	def check_targets_are_reached(self):
 		"""checks whether a target is reached"""
-		for target in self.targets["to_reach"]:
-			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
-			remaining_dependencies = []
-			for dependency in target.depends_targets:
-				remaining_dependencies.append(dependency)
-			for dependency in target.depends_services:
-				remaining_dependencies.append(dependency)
-			for dependency in remaining_dependencies:
-				for x in self.targets["reached"]:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-				for x in self.services["running"]:
-					if x.__module__.split(".")[1] == dependency:
-						remaining_dependencies.remove(dependency)
-			remaining_conflicts = []
-			for conflict in target.conflicts:
-				remaining_conflicts.append(conflict)
-			for conflict in remaining_conflicts:
-				isFound = False
-				for status in ["running", "starting", "to_start"]:
-					for x in self.services[status]:
-						if x.__module__.split(".")[1] == conflict:
-							isFound = True
-				if not isFound:
-					remaining_conflicts.remove(conflict)
-			if not remaining_dependencies and not remaining_conflicts:
-				self.printDebug(target.__module__.split(".")[1] + " is reached.")
-				self.targets["reached"].append(target)
-				self.targets["to_reach"].remove(target)
-			else:
-				self.printDebug(target.__module__.split(".")[1] + " is not reached.")
+		for status in self.targets:
+			for target in self.targets[status]:
+				self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
+				remaining_dependencies = []
+				for dependency in target.depends_targets:
+					remaining_dependencies.append(dependency)
+				for dependency in target.depends_services:
+					remaining_dependencies.append(dependency)
+				for dependency in remaining_dependencies:
+					for x in self.targets["reached"]:
+						if x.__module__.split(".")[1] == dependency:
+							remaining_dependencies.remove(dependency)
+					for x in self.services["running"]:
+						if x.__module__.split(".")[1] == dependency:
+							remaining_dependencies.remove(dependency)
+				remaining_conflicts = []
+				for conflict in target.conflicts:
+					remaining_conflicts.append(conflict)
+				for conflict in remaining_conflicts:
+					isFound = False
+					for status in ["running", "starting", "to_start"]:
+						for x in self.services[status]:
+							if x.__module__.split(".")[1] == conflict:
+								isFound = True
+					if not isFound:
+						remaining_conflicts.remove(conflict)
+				if not remaining_dependencies and not remaining_conflicts:
+					self.printDebug(target.__module__.split(".")[1] + " is reached.")
+					if target in self.targets["to_reach"]:
+						self.targets["reached"].append(target)
+						self.targets["to_reach"].remove(target)
+				else:
+					self.printDebug(target.__module__.split(".")[1] + " is not reached.")
+					if target in self.targets["reached"]:
+						self.targets["reached"].remove(target) #TODO: Should it be reached again?
 	
 	def check_services_can_start(self):
 		"""checks whether a service can start"""
