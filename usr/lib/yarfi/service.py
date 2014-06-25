@@ -59,6 +59,8 @@ class YARFI:
 		self.check_targets_are_reached()
 		self.printDebug("Checking whether a service can start...")
 		self.check_services_can_start()
+		self.printDebug("Checking whether a service can be stopped...")
+		self.check_services_can_stop()
 		self.printDebug("Starting the services that can be started...")
 		self.start_services()
 		self.printDebug("Stopping the services that can be stopped...")
@@ -188,6 +190,22 @@ class YARFI:
 			else:
 				self.printDebug(service.__module__.split(".")[1] + " can't start.")
 	
+	def check_services_can_stop(self):
+		"""checks whether a service can be stopped"""
+		for service in self.services["to_shut_down"]:
+			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
+			canBeStopped = True
+			for status in ["running", "starting", "can_start", "shutting_down"]:
+				for x in self.services[status]:
+					if service.__module__.split(".")[1] in x.depends:
+						canBeStopped = False
+			if canBeStopped:
+				self.printDebug(service.__module__.split(".")[1] + " can be stopped.")
+				self.services["can_shut_down"].append(service)
+				self.services["to_shut_down"].remove(service)
+			else:
+				self.printDebug(service.__module__.split(".")[1] + " can't be stopped.")
+
 	def start_services(self):
 		"""starts the services that can be started"""
 		for service in self.services["can_start"]:
