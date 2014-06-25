@@ -129,18 +129,18 @@ class YARFI:
 		for status in self.targets:
 			for target in self.targets[status]:
 				self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
-				remaining_dependencies = []
+				remaining_dependencies = {"targets": [], "services": []}
 				for dependency in target.depends_targets:
-					remaining_dependencies.append(dependency)
+					remaining_dependencies["targets"].append(dependency)
 				for dependency in target.depends_services:
-					remaining_dependencies.append(dependency)
+					remaining_dependencies["services"].append(dependency)
 				for dependency in remaining_dependencies:
 					for x in self.targets["reached"]:
 						if x.__module__.split(".")[1] == dependency:
-							remaining_dependencies.remove(dependency)
+							remaining_dependencies["targets"].remove(dependency)
 					for x in self.services["running"]:
 						if x.__module__.split(".")[1] == dependency:
-							remaining_dependencies.remove(dependency)
+							remaining_dependencies["services"].remove(dependency)
 				remaining_conflicts = []
 				for conflict in target.conflicts:
 					remaining_conflicts.append(conflict)
@@ -152,7 +152,7 @@ class YARFI:
 								isFound = True
 					if not isFound:
 						remaining_conflicts.remove(conflict)
-				if not remaining_dependencies and not remaining_conflicts:
+				if not remaining_dependencies["targets"] and not remaining_dependencies["services"] and not remaining_conflicts:
 					self.printDebug(target.__module__.split(".")[1] + " is reached.")
 					if target in self.targets["to_reach"]:
 						self.targets["reached"].append(target)
