@@ -65,6 +65,7 @@ class YARFI:
 		self.start_services()
 		self.printDebug("Stopping the services that can be stopped...")
 		self.stop_services()
+		self.printDebug("Checking whether the status of a service has changed...")
 		self.check_services_status_has_changed()
 		#...
 		self.printDebug("Checking if there's anything left to do...")
