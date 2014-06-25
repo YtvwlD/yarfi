@@ -14,10 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import
+
 import os
 import subprocess
 import time
 from dbus import SystemBus
+from dbus.exceptions import DBusException
 
 class Service:
 	def __init__(self):
@@ -60,7 +63,7 @@ class Service:
 			try:
 				SystemBus()
 				return ("running")
-			except:
+			except DBusException:
 				return ("starting")
 		else:
 			return ("stopped")
