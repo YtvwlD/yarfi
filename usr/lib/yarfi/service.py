@@ -97,7 +97,7 @@ class YARFI:
 			for dependency in target.depends_services:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for status in ["running", "starting", "to_start"]:
+				for status in self.services:
 					for x in self.services[status]:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
