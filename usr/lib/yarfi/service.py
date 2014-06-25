@@ -286,7 +286,7 @@ class YARFI:
 				for x in self.services[status]:
 					for dependency in x.depends:
 						if dependency == service.__module__.split(".")[1]:
-							self.stop(x)
+							self.stop(x.__module__.split(".")[1])
 			self.services["to_shut_down"].append(service)
 			self.startTimer()
 			self.printDebug (service.description + " service is queued to be stopped.")
