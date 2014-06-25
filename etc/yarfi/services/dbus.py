@@ -14,13 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-
 import os
 import subprocess
 import time
-from dbus import SystemBus
-from dbus.exceptions import DBusException
 
 class Service:
 	def __init__(self):
@@ -62,10 +58,22 @@ class Service:
 	def status(self):
 		if self.process:
 			if self.process.returncode is None:
-				try:
-					SystemBus()
+				test = subprocess.Popen(["python", "/etc/yarfi/services/dbus.py"])
+				test.wait()
+				if test.returncode == 0:
 					return ("running")
-				except DBusException:
-					return ("starting")
 			else:
 				return ("stopped")
+
+if __name__ == "__main__":
+	import sys
+	sys.path.remove(sys.path[0])
+
+	from dbus import SystemBus
+	from dbus.exceptions import DBusException
+
+	try:
+		SystemBus()
+		sys.exit(0)
+	except DBusException:
+		sys.exit(1)
