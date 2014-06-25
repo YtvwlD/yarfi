@@ -17,6 +17,7 @@
 import os
 import subprocess
 import time
+from dbus import SystemBus
 
 class Service:
 	def __init__(self):
@@ -53,3 +54,13 @@ class Service:
 			time.sleep(5)
 			self.process.kill()
 		os.remove("/var/run/dbus/pid")
+
+	def status(self):
+		if self.process.returncode is None:
+			try:
+				SystemBus()
+				return ("running")
+			except:
+				return ("starting")
+		else:
+			return ("stopped")
