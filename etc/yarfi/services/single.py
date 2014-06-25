@@ -23,6 +23,7 @@ class Service:
 		self.depends = ["dbus"]
 		self.conflicts = []
 		self.respawn = True
+		self.process = None
 	
 	def start(self):
 		self.process = subprocess.Popen(["/sbin/sulogin"])
@@ -34,7 +35,8 @@ class Service:
 			self.process.kill()
 
 	def status(self):
-		if self.process.returncode is None:
-			return ("running")
-		else:
-			return ("stopped")
+		if self.process:
+			if self.process.returncode is None:
+				return ("running")
+			else:
+				return ("stopped")
