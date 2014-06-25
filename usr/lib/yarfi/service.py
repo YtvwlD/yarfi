@@ -103,7 +103,10 @@ class YARFI:
 				for status in self.services:
 					for x in self.services[status]:
 						if x.__module__.split(".")[1] == dependency:
-							remaining_dependencies.remove(dependency)
+							try:
+								remaining_dependencies.remove(dependency)
+							except ValueError:
+								pass
 				for dependency in remaining_dependencies:
 					self.printDebug("Importing " + dependency + "...")
 					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
