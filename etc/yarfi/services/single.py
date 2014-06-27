@@ -20,7 +20,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "Single User Mode"
-		self.depends = ["dbus"]
+		self.depends = ["system", "dbus"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
@@ -33,7 +33,7 @@ class Service:
 		if self.process.returncode is None:
 			time.sleep(5)
 			self.process.kill()
-
+	
 	def status(self):
 		if self.process:
 			if self.process.returncode is None:

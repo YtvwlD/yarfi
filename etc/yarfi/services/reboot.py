@@ -15,28 +15,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import time
 
 class Service:
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem"]
-		self.conflicts = []
-		self.respawn = True
+		self.description = "reboots the system"
+		self.depends = []
+		self.conflicts = ["system"] # do NOT invoke this directly! (use the "reboot" target instead)
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["NetworkManager"])
+		self.process = subprocess.Popen(["reboot", "-f"])
 	
 	def stop(self):
-		self.process.terminate()
-		if self.process.returncode is None:
-			time.sleep(5)
-			self.process.kill()
+		pass
 	
 	def status(self):
 		if self.process:
-			if self.process.returncode is None:
+			if self.process.returncode is not None:
 				return ("running")
-			else:
-				return ("stopped")

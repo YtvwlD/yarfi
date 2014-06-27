@@ -19,22 +19,21 @@ import subprocess
 class Service:
 	def __init__(self):
 		self.description = "mount filesystems" #and check them?
-		self.depends = []
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
 		self.mount = None
 		self.umount = None
-
+	
 	def start(self):
 		# TODO: Check the filesystems if they need to be checked.
 		self.umount = None
 		self.mount = subprocess.Popen(["mount", "-a", "--fork"])
-
-
+	
 	def stop(self):
 		self.mount = None
 		self.umount = subprocess.Popen(["umount", "-a", "-r"])
-
+	
 	def status(self):
 		if self.mount:
 			if self.mount.returncode is not None:

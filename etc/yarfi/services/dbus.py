@@ -21,7 +21,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "message bus"
-		self.depends = []
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
@@ -54,7 +54,7 @@ class Service:
 			time.sleep(5)
 			self.process.kill()
 		os.remove("/var/run/dbus/pid")
-
+	
 	def status(self):
 		if self.process:
 			if self.process.returncode is None:
@@ -68,10 +68,10 @@ class Service:
 if __name__ == "__main__":
 	import sys
 	sys.path.remove(sys.path[0])
-
+	
 	from dbus import SystemBus
 	from dbus.exceptions import DBusException
-
+	
 	try:
 		SystemBus()
 		sys.exit(0)

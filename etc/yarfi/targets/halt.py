@@ -14,29 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
-import time
-
-class Service:
+class Target:
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem"]
-		self.conflicts = []
-		self.respawn = True
-		self.process = None
-	
-	def start(self):
-		self.process = subprocess.Popen(["NetworkManager"])
-	
-	def stop(self):
-		self.process.terminate()
-		if self.process.returncode is None:
-			time.sleep(5)
-			self.process.kill()
-	
-	def status(self):
-		if self.process:
-			if self.process.returncode is None:
-				return ("running")
-			else:
-				return ("stopped")
+		self.description = "halts the system"
+		self.depends_targets = []
+		self.depends_services = []
+		self.conflicts = ["system", "filesystem", "dbus", "single"] #everything

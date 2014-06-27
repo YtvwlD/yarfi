@@ -21,13 +21,13 @@ class Service:
 	def __init__(self):
 		self.description = "execs /sbin/init"
 		self.depends = []
-		self.conflicts = ["dbus"]
+		self.conflicts = ["system"]
 	
 	def start(self):
 		os.execv("/sbin/init", sys.argv)
 	
 	def stop(self):
 		pass
-
+	
 	def status(self):
 		pass

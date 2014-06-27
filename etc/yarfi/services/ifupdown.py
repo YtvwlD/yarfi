@@ -20,7 +20,7 @@ import os
 class Service:
 	def __init__(self):
 		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = ["filesystem"]
+		self.depends = ["system", "filesystem"]
 		self.conflicts = []
 		self.respawn = False
 		self.ifup = None
