@@ -20,7 +20,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "make networking simple and straightforward"
-		self.depends = ["dbus", "ifupdown"]
+		self.depends = ["dbus", "ifupdown", "filesystem"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None

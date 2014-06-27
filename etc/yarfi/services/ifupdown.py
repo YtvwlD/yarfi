@@ -15,18 +15,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import time
+import os
 
 class Service:
 	def __init__(self):
 		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = []
+		self.depends = ["filesystem"]
 		self.conflicts = []
 		self.respawn = False
 		self.ifup = None
 		self.ifdown = None
 	
 	def start(self):
+		try:
+			os.mkdir("/run/dbus/network")
+		except OSError as e:
+			if e.errno == 17:
+				pass
+			else:
+				raise
 		self.ifup = subprocess.Popen(["ifup", "-a"])
 		self.ifdown = None
 	
