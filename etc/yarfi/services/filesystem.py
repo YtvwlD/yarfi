@@ -1,0 +1,44 @@
+# YARFI - Yet Another Replacement For Init
+# Copyright (C) 2014 Niklas Sombert
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import subprocess
+
+class Service:
+	def __init__(self):
+		self.description = "mount filesystems" #and check them?
+		self.depends = []
+		self.conflicts = []
+		self.respawn = True
+		self.mount = None
+		self.umount = None
+
+	def start(self):
+		# TODO: Check the filesystems if they need to be checked.
+		self.umount = None
+		self.mount = subprocess.Popen(["mount", "-a", "--fork"])
+
+
+	def stop(self):
+		self.mount = None
+		self.umount = subprocess.Popen(["umount", "-a", "-r"])
+
+	def status(self):
+		if self.mount:
+			if self.mount.returncode is not None:
+				return ("running")
+		elif self.umount:
+			if self.umount.returncode is not None:
+				return ("stopped")
