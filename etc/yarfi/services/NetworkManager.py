@@ -20,7 +20,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem"]
+		self.depends = ["system", "dbus", "ifupdown", "filesystem"] #does it really depend on "filesystem"?
 		self.conflicts = []
 		self.respawn = True
 		self.process = None

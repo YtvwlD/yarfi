@@ -20,7 +20,7 @@ import os
 class Service:
 	def __init__(self):
 		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = ["system", "filesystem"]
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = False
 		self.ifup = None
@@ -30,7 +30,7 @@ class Service:
 		try:
 			os.mkdir("/run/dbus/network")
 		except OSError as e:
-			if e.errno == 17:
+			if e.errno == 17: #the folder already exists
 				pass
 			else:
 				raise

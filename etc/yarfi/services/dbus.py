@@ -30,7 +30,7 @@ class Service:
 		try:
 			os.mkdir("/var/run/dbus")
 		except OSError as e:
-			if e.errno == 17:
+			if e.errno == 17: #the folder already exists
 				pass
 			else:
 				raise
