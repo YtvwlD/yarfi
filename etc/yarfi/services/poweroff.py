@@ -31,5 +31,5 @@ class Service:
 	
 	def status(self):
 		if self.process:
-			if self.process.returncode is not None:
+			if self.process.poll() is not None:
 				return ("running")

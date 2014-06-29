@@ -39,8 +39,8 @@ class Service:
 	
 	def status(self):
 		if self.mount:
-			if self.mount.returncode is not None and self.remount.returncode is not None:
+			if self.mount.poll() is not None and self.remount.poll() is not None:
 				return ("running")
 		elif self.umount:
-			if self.umount.returncode is not None:
+			if self.umount.poll() is not None:
 				return ("stopped")

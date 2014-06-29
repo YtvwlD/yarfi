@@ -44,8 +44,8 @@ class Service:
 	
 	def status(self):
 		if self.ifup:
-			if self.ifup.returncode is not None:
+			if self.ifup.poll() is not None:
 				return ("running")
 		elif self.ifdown:
-			if self.ifdown.returncode is not None:
+			if self.ifdown.poll() is not None:
 				return ("stopped")
