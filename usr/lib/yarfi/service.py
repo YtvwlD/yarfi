@@ -252,31 +252,37 @@ class YARFI:
 
 	def printState(self):
 		"""prints the current state of targets and services"""
-		clearline = "\033[K"
-		with os.popen("tput cols") as tput:
-			cols = int(tput.read())
-		with os.popen("tput sc") as tput:
-			sys.stdout.write(tput.read())
-		with os.popen("tput cup 0 0") as tput:
-			sys.stdout.write(tput.read())
-			for status in self.targets:
-				sys.stdout.write(clearline)
-				sys.stdout.write("Targets " + status + ":")
-				for x in self.targets[status]:
-					sys.stdout.write(" " + x.__module__.split(".")[1])
-				sys.stdout.write("\n")
-			for status in self.services:
-				sys.stdout.write(clearline)
-				sys.stdout.write("Services " + status + ":")
-				for x in self.services[status]:
-					sys.stdout.write(" " + x.__module__.split(".")[1])
-				sys.stdout.write("\n")
+		try:
+			clearline = "\033[K"
+			with os.popen("tput cols") as tput:
+				cols = int(tput.read())
+			with os.popen("tput sc") as tput:
+				sys.stdout.write(tput.read())
+			with os.popen("tput cup 0 0") as tput:
+				sys.stdout.write(tput.read())
+		except:
+			pass
+		for status in self.targets:
+			sys.stdout.write(clearline)
+			sys.stdout.write("Targets " + status + ":")
+			for x in self.targets[status]:
+				sys.stdout.write(" " + x.__module__.split(".")[1])
+			sys.stdout.write("\n")
+		for status in self.services:
+			sys.stdout.write(clearline)
+			sys.stdout.write("Services " + status + ":")
+			for x in self.services[status]:
+				sys.stdout.write(" " + x.__module__.split(".")[1])
+			sys.stdout.write("\n")
+		try:
 			sys.stdout.write(self.delimiter * (cols/2))
 			self.delimiter = self.delimiter[1] + self.delimiter[0]
 			sys.stdout.write("\n")
-		with os.popen("tput rc") as tput:
-			sys.stdout.write(tput.read())
-			sys.stdout.flush()
+			with os.popen("tput rc") as tput:
+				sys.stdout.write(tput.read())
+				sys.stdout.flush()
+		except:
+			pass
 
 	def reach_target(self, wanted_target):
 		self.printDebug ("Wanted target: " + wanted_target)
