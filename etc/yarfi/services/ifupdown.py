@@ -1,4 +1,4 @@
-# YARFI - Yet Another Replacement For Init
+﻿# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ import os
 class Service:
 	def __init__(self):
 		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = ["system"]
+		self.depends = ["system", "filesystem"]
 		self.conflicts = []
 		self.respawn = False
 		self.ifup = None

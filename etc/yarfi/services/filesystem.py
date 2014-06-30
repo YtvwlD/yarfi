@@ -1,4 +1,4 @@
-# YARFI - Yet Another Replacement For Init
+﻿# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ import subprocess
 class Service:
 	def __init__(self):
 		self.description = "mount filesystems" #and check them?
-		self.depends = ["system", "ifupdown"]
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
 		self.mount = None
