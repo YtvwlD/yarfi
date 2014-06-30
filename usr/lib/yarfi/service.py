@@ -112,9 +112,9 @@ class YARFI:
 					for dependency in remaining_dependencies:
 						if srv.__module__.split(".")[1] == dependency:
  							remaining_dependencies.remove(dependency)
-				for dependency in remaining_dependencies:
-					self.printDebug("Importing " + dependency + "...")
-					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
+			for dependency in remaining_dependencies:
+				self.printDebug("Importing " + dependency + "...")
+				self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 
 	def check_services_have_dependencies(self):
 		"""checks whether services have dependencies that have not been imported yet"""
@@ -129,9 +129,9 @@ class YARFI:
 					for dependency in remaining_dependencies:
 						if srv.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
-				for dependency in remaining_dependencies:
-					self.printDebug("Importing " + dependency + "...")
-					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
+			for dependency in remaining_dependencies:
+				self.printDebug("Importing " + dependency + "...")
+				self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
 	
 	def check_targets_are_reached(self):
 		"""checks whether a target is reached"""
