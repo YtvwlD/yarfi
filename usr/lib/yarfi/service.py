@@ -43,6 +43,13 @@ class YARFI:
 	def printDebug(self, msg):
 		if self.debug:
 			print (msg)
+	
+	def getCurrentServices(self):
+		services = []
+ 		for status in self.services:
+ 			for x in self.services[status]:
+ 				services.append(x)
+ 		return (services)
 
 	def startTimer(self):
 		if not self.timer.isActive():
@@ -100,13 +107,11 @@ class YARFI:
 			for dependency in target.depends_services:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for status in self.services:
-					for x in self.services[status]:
-						if x.__module__.split(".")[1] == dependency:
-							try:
-								remaining_dependencies.remove(dependency)
-							except ValueError:
-								pass
+				services = self.getCurrentServices()
+				for srv in services:
+					for dependency in remaining_dependencies:
+						if srv.__module__.split(".")[1] == dependency:
+ 							remaining_dependencies.remove(dependency)
 				for dependency in remaining_dependencies:
 					self.printDebug("Importing " + dependency + "...")
 					self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
@@ -119,9 +124,10 @@ class YARFI:
 			for dependency in service.depends:
 				remaining_dependencies.append(dependency)
 			for dependency in remaining_dependencies:
-				for status in ["running", "starting", "to_start"]:
-					for x in self.services[status]:
-						if x.__module__.split(".")[1] == dependency:
+				services = self.getCurrentServices()
+				for srv in services:
+					for dependency in remaining_dependencies:
+						if srv.__module__.split(".")[1] == dependency:
 							remaining_dependencies.remove(dependency)
 				for dependency in remaining_dependencies:
 					self.printDebug("Importing " + dependency + "...")
