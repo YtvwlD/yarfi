@@ -238,18 +238,19 @@ class YARFI:
 			for service in self.services[status]:
 				self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
 				ServiceThread(self, service, "status").start()
-
+	
 	def service_status_has_changed(self, service, status):
-		if status == "running":
+		if status in ["running", "stopped"]: #TODO: Handle crashes and respawn
+			self.printDebug("The status of " + service.__module__.split(".")[1] + " has changed to '" + status + "'.")
 			if service in self.services["starting"]:
-				self.printDebug("The status of " + service.__module__.split(".")[1] + " has changed to '" + status + "'.")
-				self.services["running"].append(service)
+				if status == "running":
+					self.services["running"].append(service)
+				elif status == "stopped": #Service exited during startup.
+					pass #TODO: What should be done? (It will be automatically re-imported and scheduled to be started. What if there is a serious error?)
 				self.services["starting"].remove(service)
-		elif status == "stopped": #TODO: Handle crashes and respawn
-			if service in self.services["shutting_down"]:
-				self.printDebug("The status of " + service.__module__.split(".")[1] + " has changed to '" + status + "'.")
+			elif service in self.services["shutting_down"]:
 				self.services["shutting_down"].remove(service)
-
+	
 	def printState(self):
 		"""prints the current state of targets and services"""
 		try:
