@@ -199,6 +199,8 @@ class YARFI:
 				self.services["to_start"].remove(service)
 			else:
 				self.printDebug(service.__module__.split(".")[1] + " can't start.")
+				self.printDebug(" ... because there are remaining dependencies: " + str(remaining_dependencies))
+				self.printDebug(" ... because there are remaining conflicts: " + str(remaining_conflicts))
 	
 	def check_services_can_stop(self):
 		"""checks whether a service can be stopped"""
