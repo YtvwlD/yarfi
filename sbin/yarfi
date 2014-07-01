@@ -45,6 +45,13 @@ with open("/proc/cmdline") as cmdline:
 
 if wanted_target == "":
 	wanted_target = "default"
+	
+try:
+	wanted_target = sys.argv[1]
+except IndexError:
+	pass
+if "debug" in sys.argv:
+	debug = True
 
 yarfi = YARFI(debug=debug)
 	

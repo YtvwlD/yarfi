@@ -19,18 +19,16 @@ import sys
 
 class Service:
 	def __init__(self):
-		self.description = "execs /sbin/init"
+		self.description = "a symbolical service"
 		self.depends = []
-		self.conflicts = ["system"]
+		self.conflicts = ["halt"]
+		self.status_ = ""
 	
 	def start(self):
-		os.execv("/sbin/init", sys.argv)
+		self.status_ = "running"
 	
 	def stop(self):
-		pass
+		self.status_ = "stopped"
 	
 	def status(self):
-		pass
-	
-	def status(self):
-		pass
+		return (self.status_)

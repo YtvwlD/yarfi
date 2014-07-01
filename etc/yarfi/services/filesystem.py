@@ -1,4 +1,4 @@
-# YARFI - Yet Another Replacement For Init
+﻿# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,23 +14,33 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
+import subprocess
 
 class Service:
 	def __init__(self):
-		self.description = "execs /sbin/init"
-		self.depends = []
-		self.conflicts = ["system"]
+		self.description = "mount filesystems" #and check them?
+		self.depends = ["system"]
+		self.conflicts = []
+		self.respawn = True
+		self.mount = None
+		self.remount = None
+		self.umount = None
 	
 	def start(self):
-		os.execv("/sbin/init", sys.argv)
+		# TODO: Check the filesystems if they need to be checked.
+		self.umount = None
+		self.remount = subprocess.Popen(["mount", "-o", "remount,rw", "/"])
+		self.mount = subprocess.Popen(["mount", "-a", "--fork"])
 	
 	def stop(self):
-		pass
+		self.mount = None
+		self.remount = None
+		self.umount = subprocess.Popen(["umount", "-a", "-r"])
 	
 	def status(self):
-		pass
-	
-	def status(self):
-		pass
+		if self.mount:
+			if self.mount.poll() is not None and self.remount.poll() is not None:
+				return ("running")
+		elif self.umount:
+			if self.umount.poll() is not None:
+				return ("stopped")

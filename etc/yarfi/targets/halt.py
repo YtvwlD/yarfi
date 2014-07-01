@@ -14,23 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
-
-class Service:
+class Target:
 	def __init__(self):
-		self.description = "execs /sbin/init"
-		self.depends = []
-		self.conflicts = ["system"]
-	
-	def start(self):
-		os.execv("/sbin/init", sys.argv)
-	
-	def stop(self):
-		pass
-	
-	def status(self):
-		pass
-	
-	def status(self):
-		pass
+		self.description = "halts the system"
+		self.depends_targets = []
+		self.depends_services = []
+		self.conflicts = ["system", "filesystem", "dbus", "single"] #everything

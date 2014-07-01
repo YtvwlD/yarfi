@@ -14,23 +14,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
+import subprocess
+import time
 
 class Service:
 	def __init__(self):
-		self.description = "execs /sbin/init"
-		self.depends = []
-		self.conflicts = ["system"]
+		self.description = "make networking simple and straightforward"
+		self.depends = ["system", "dbus", "ifupdown", "filesystem"] #does it really depend on "filesystem"?
+		self.conflicts = []
+		self.respawn = True
+		self.process = None
 	
 	def start(self):
-		os.execv("/sbin/init", sys.argv)
+		self.process = subprocess.Popen(["NetworkManager"])
 	
 	def stop(self):
-		pass
+		self.process.terminate()
+		if self.process.poll() is None:
+			time.sleep(5)
+			self.process.kill()
 	
 	def status(self):
-		pass
-	
-	def status(self):
-		pass
+		if self.process:
+			if self.process.poll() is None:
+				return ("running")
+			else:
+				return ("stopped")

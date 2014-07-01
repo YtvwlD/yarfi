@@ -14,23 +14,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
+import subprocess
 
 class Service:
 	def __init__(self):
-		self.description = "execs /sbin/init"
+		self.description = "switches the system off"
 		self.depends = []
-		self.conflicts = ["system"]
+		self.conflicts = ["system"] # do NOT invoke this directly! (use the "poweroff" target instead)
+		self.process = None
 	
 	def start(self):
-		os.execv("/sbin/init", sys.argv)
+		self.process = subprocess.Popen(["poweroff", "-f"])
 	
 	def stop(self):
 		pass
 	
 	def status(self):
-		pass
-	
-	def status(self):
-		pass
+		if self.process:
+			if self.process.poll() is not None:
+				return ("running")

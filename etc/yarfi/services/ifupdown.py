@@ -1,4 +1,4 @@
-# YARFI - Yet Another Replacement For Init
+﻿# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,23 +14,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import subprocess
 import os
-import sys
 
 class Service:
 	def __init__(self):
-		self.description = "execs /sbin/init"
-		self.depends = []
-		self.conflicts = ["system"]
+		self.description = "Network - configured by /etc/network/interfaces"
+		self.depends = ["system", "filesystem"]
+		self.conflicts = []
+		self.respawn = False
+		self.ifup = None
+		self.ifdown = None
 	
 	def start(self):
-		os.execv("/sbin/init", sys.argv)
+		try:
+			os.mkdir("/run/dbus/network")
+		except OSError as e:
+			if e.errno == 17: #the folder already exists
+				pass
+			else:
+				raise
+		self.ifup = subprocess.Popen(["ifup", "-a"])
+		self.ifdown = None
 	
 	def stop(self):
-		pass
+		self.ifdown = subprocess.Popen(["ifdown", "-a"])
+		self.ifup = None
+		# TODO: What happens if there are mounted network filesystems?
 	
 	def status(self):
-		pass
-	
-	def status(self):
-		pass
+		if self.ifup:
+			if self.ifup.poll() is not None:
+				return ("running")
+		elif self.ifdown:
+			if self.ifdown.poll() is not None:
+				return ("stopped")

@@ -21,7 +21,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "message bus"
-		self.depends = []
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
@@ -30,7 +30,7 @@ class Service:
 		try:
 			os.mkdir("/var/run/dbus")
 		except OSError as e:
-			if e.errno == 17:
+			if e.errno == 17: #the folder already exists
 				pass
 			else:
 				raise
@@ -50,17 +50,17 @@ class Service:
 	
 	def stop(self):
 		self.process.terminate()
-		if self.process.returncode is None:
+		if self.process.poll() is None:
 			time.sleep(5)
 			self.process.kill()
 		os.remove("/var/run/dbus/pid")
-
+	
 	def status(self):
 		if self.process:
-			if self.process.returncode is None:
+			if self.process.poll() is None:
 				test = subprocess.Popen(["python", "/etc/yarfi/services/dbus.py"])
 				test.wait()
-				if test.returncode == 0:
+				if test.poll() == 0:
 					return ("running")
 			else:
 				return ("stopped")
@@ -68,10 +68,10 @@ class Service:
 if __name__ == "__main__":
 	import sys
 	sys.path.remove(sys.path[0])
-
+	
 	from dbus import SystemBus
 	from dbus.exceptions import DBusException
-
+	
 	try:
 		SystemBus()
 		sys.exit(0)

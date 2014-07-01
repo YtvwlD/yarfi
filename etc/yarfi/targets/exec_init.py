@@ -19,4 +19,4 @@ class Target:
 		self.description = "execs /sbin/init"
 		self.depends_targets = []
 		self.depends_services = ["exec_init"] #almost nothing
-		self.conflicts = ["dbus", "single"] #everything
+		self.conflicts = ["system"] #everything
