@@ -52,8 +52,8 @@ class YARFI:
  		return (services)
 
 	def startTimer(self):
+		self.timer.setInterval(250)
 		if not self.timer.isActive():
-			self.timer.setInterval(250)
 			self.timer.start()
 
 	def check(self):
