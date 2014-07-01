@@ -20,7 +20,7 @@ import time
 class Service:
 	def __init__(self):
 		self.description = "Single User Mode"
-		self.depends = ["system", "dbus"]
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None

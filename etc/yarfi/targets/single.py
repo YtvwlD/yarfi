@@ -18,5 +18,5 @@ class Target:
 	def __init__(self):
 		self.description = "Single User Mode"
 		self.depends_targets = []
-		self.depends_services = ["single"]
+		self.depends_services = ["single", "dbus"]
 		self.conflicts = [] #nothing
