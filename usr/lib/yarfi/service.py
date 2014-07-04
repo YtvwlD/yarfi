@@ -143,10 +143,11 @@ class YARFI:
 					remaining_dependencies["targets"].append(dependency)
 				for dependency in target.depends_services:
 					remaining_dependencies["services"].append(dependency)
-				for dependency in remaining_dependencies:
+				for dependency in remaining_dependencies["targets"]:
 					for x in self.targets["reached"]:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies["targets"].remove(dependency)
+				for dependency in remaining_dependencies["services"]:
 					for x in self.services["running"]:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies["services"].remove(dependency)
