@@ -89,9 +89,7 @@ class YARFI:
 		# check for targets that are missing
 		for target in self.targets["to_reach"]:
 			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
-			remaining_dependencies = []
-			for dependency in target.depends_targets:
-				remaining_dependencies.append(dependency)
+			remaining_dependencies = target.depends_targets[:]
 			for dependency in remaining_dependencies:
 				for status in ["reached", "to_reach"]:
 					for x in self.targets[status]:
@@ -103,9 +101,7 @@ class YARFI:
 		# check for services that are missing
 		for target in self.targets["to_reach"]:
 			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
-			remaining_dependencies = []
-			for dependency in target.depends_services:
-				remaining_dependencies.append(dependency)
+			remaining_dependencies = target.depends_services[:]
 			for dependency in remaining_dependencies:
 				services = self.getCurrentServices()
 				for srv in services:
@@ -120,9 +116,7 @@ class YARFI:
 		"""checks whether services have dependencies that have not been imported yet"""
 		for service in self.services["to_start"]:
 			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
-			remaining_dependencies = []
-			for dependency in service.depends:
-				remaining_dependencies.append(dependency)
+			remaining_dependencies = service.depends[:]
 			for dependency in remaining_dependencies:
 				services = self.getCurrentServices()
 				for srv in services:
@@ -139,10 +133,8 @@ class YARFI:
 			for target in self.targets[status]:
 				self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
 				remaining_dependencies = {"targets": [], "services": []}
-				for dependency in target.depends_targets:
-					remaining_dependencies["targets"].append(dependency)
-				for dependency in target.depends_services:
-					remaining_dependencies["services"].append(dependency)
+				remaining_dependencies["targets"] = target.depends_targets[:]
+				remaining_dependencies["services"] = target.depends_services[:]
 				for dependency in remaining_dependencies["targets"]:
 					for x in self.targets["reached"]:
 						if x.__module__.split(".")[1] == dependency:
@@ -151,9 +143,7 @@ class YARFI:
 					for x in self.services["running"]:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies["services"].remove(dependency)
-				remaining_conflicts = []
-				for conflict in target.conflicts:
-					remaining_conflicts.append(conflict)
+				remaining_conflicts = target.conflicts[:]
 				for conflict in remaining_conflicts:
 					isFound = False
 					for status in ["running", "starting", "to_start"]:
@@ -176,16 +166,12 @@ class YARFI:
 		"""checks whether a service can start"""
 		for service in self.services["to_start"]:
 			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
-			remaining_dependencies = []
-			for dependency in service.depends:
-				remaining_dependencies.append(dependency)
+			remaining_dependencies = service.depends[:]
 			for dependency in remaining_dependencies:
 				for x in self.services["running"]:
 					if x.__module__.split(".")[1] == dependency:
 						remaining_dependencies.remove(dependency)
-			remaining_conflicts = []
-			for conflict in service.conflicts:
-				remaining_conflicts.append(conflict)
+			remaining_conflicts = service.conflicts[:]
 			for conflict in remaining_conflicts:
 				isFound = False
 				for status in ["running", "starting", "to_start"]:
