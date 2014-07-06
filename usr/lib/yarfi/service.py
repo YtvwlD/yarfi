@@ -39,23 +39,23 @@ class YARFI:
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.check)
 		self.delimiter = "- "
-
+	
 	def printDebug(self, msg):
 		if self.debug:
 			print (msg)
 	
 	def getCurrentServices(self):
 		services = []
- 		for status in self.services:
- 			for x in self.services[status]:
- 				services.append(x)
- 		return (services)
-
+		for status in self.services:
+			for x in self.services[status]:
+				services.append(x)
+		return (services)
+	
 	def startTimer(self):
 		self.timer.setInterval(250)
 		if not self.timer.isActive():
 			self.timer.start()
-
+	
 	def check(self):
 		self.printDebug("timeout - " + str(self.timer.interval()))
 		self.printDebug("Checking whether targets have dependencies that have not been imported yet...")
@@ -83,7 +83,7 @@ class YARFI:
 			self.printDebug("Something left to do. Continuing...")
 			self.timer.setInterval(self.timer.interval() * 1.25)
 		self.printState()
-
+	
 	def check_targets_have_dependencies(self):
 		"""checks whether targets have dependencies that have not been imported yet"""
 		# check for targets that are missing
@@ -107,11 +107,11 @@ class YARFI:
 				for srv in services:
 					for dependency in remaining_dependencies:
 						if str(srv) == dependency:
- 							remaining_dependencies.remove(dependency)
+							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
 				self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
-
+	
 	def check_services_have_dependencies(self):
 		"""checks whether services have dependencies that have not been imported yet"""
 		for service in self.services["to_start"]:
@@ -205,7 +205,7 @@ class YARFI:
 				self.services["to_shut_down"].remove(service)
 			else:
 				self.printDebug(str(service) + " can't be stopped.")
-
+	
 	def start_services(self):
 		"""starts the services that can be started"""
 		for service in self.services["can_start"]:
@@ -221,7 +221,7 @@ class YARFI:
 			ServiceThread(self, service, "stop").start()
 			self.services["can_shut_down"].remove(service)
 			self.services["shutting_down"].append(service)
-
+	
 	def check_services_status_has_changed(self):
 		"""checks whether the status of a service has changed"""
 		for status in ["starting", "shutting_down"]: #TODO: check every status
@@ -274,7 +274,7 @@ class YARFI:
 				sys.stdout.flush()
 		except:
 			pass
-
+	
 	def reach_target(self, wanted_target):
 		self.printDebug ("Wanted target: " + wanted_target)
 		target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
@@ -289,7 +289,7 @@ class YARFI:
 		self.targets["to_reach"].append(target)
 		self.startTimer()
 		self.printDebug(target.description + " target is queued to be reached.")
-
+	
 	def start(self, srv):
 		self.printDebug ("Trying to start " + srv + "...")
 		try:
@@ -306,7 +306,7 @@ class YARFI:
 			self.printDebug (srv + " could not be started. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
 				raise
-
+	
 	def stop(self, srv):
 		self.printDebug ("Trying to stop " + srv + " service...")
 		try:
@@ -326,6 +326,6 @@ class YARFI:
 			self.printDebug (service.description + " service could not be stopped. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
 				raise
-
+	
 	def exec_(self):
 		self.app.exec_()
