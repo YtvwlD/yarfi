@@ -139,10 +139,9 @@ class YARFI:
 					for x in self.targets["reached"]:
 						if x.__module__.split(".")[1] == dependency:
 							remaining_dependencies["targets"].remove(dependency)
-				for dependency in remaining_dependencies["services"]:
-					for x in self.services["running"]:
-						if x.__module__.split(".")[1] == dependency:
-							remaining_dependencies["services"].remove(dependency)
+				for service in self.services["running"]:
+					if service.__module__.split(".")[1] in remaining_dependencies["services"]:
+						remaining_dependencies["services"].remove(service.__module__.split("."))
 				remaining_conflicts = target.conflicts[:]
 				for conflict in remaining_conflicts:
 					isFound = False
