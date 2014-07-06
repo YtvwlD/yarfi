@@ -90,11 +90,10 @@ class YARFI:
 		for target in self.targets["to_reach"]:
 			self.printDebug("Checking " + str(target) + "...")
 			remaining_dependencies = target.depends_targets[:]
-			for dependency in remaining_dependencies:
-				for status in ["reached", "to_reach"]:
-					for x in self.targets[status]:
-						if str(x) == dependency:
-							remaining_dependencies.remove(dependency)
+			for status in ["reached", "to_reach"]:
+				for trg in self.targets[status]:
+					if str(trg) in remaining_dependencies:
+						remaining_dependencies.remove(str(trg))
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
 				self.targets["to_reach"].append(__import__("targets."+dependency, fromlist=[dependency]).Target())
@@ -102,12 +101,10 @@ class YARFI:
 		for target in self.targets["to_reach"]:
 			self.printDebug("Checking " + str(target) + "...")
 			remaining_dependencies = target.depends_services[:]
-			for dependency in remaining_dependencies:
-				services = self.getCurrentServices()
-				for srv in services:
-					for dependency in remaining_dependencies:
-						if str(srv) == dependency:
-							remaining_dependencies.remove(dependency)
+			services = self.getCurrentServices()
+			for srv in services:
+				if str(srv) in remaining_dependencies:
+					remaining_dependencies.remove(str(srv))
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
 				self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
@@ -117,12 +114,10 @@ class YARFI:
 		for service in self.services["to_start"]:
 			self.printDebug("Checking " + str(service) + "...")
 			remaining_dependencies = service.depends[:]
-			for dependency in remaining_dependencies:
-				services = self.getCurrentServices()
-				for srv in services:
-					for dependency in remaining_dependencies:
-						if str(srv) == dependency:
-							remaining_dependencies.remove(dependency)
+			services = self.getCurrentServices()
+			for srv in services:
+				if str(srv) in remaining_dependencies:
+					remaining_dependencies.remove(str(srv))
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
 				self.services["to_start"].append(__import__("services."+dependency, fromlist=[dependency]).Service())
@@ -135,10 +130,9 @@ class YARFI:
 				remaining_dependencies = {"targets": [], "services": []}
 				remaining_dependencies["targets"] = target.depends_targets[:]
 				remaining_dependencies["services"] = target.depends_services[:]
-				for dependency in remaining_dependencies["targets"]:
-					for x in self.targets["reached"]:
-						if str(x) == dependency:
-							remaining_dependencies["targets"].remove(dependency)
+				for trg in self.targets["reached"]:
+					if str(trg) in remaining_dependencies["targets"]:
+						remaining_dependencies["targets"].remove(str(trg))
 				for service in self.services["running"]:
 					if str(service) in remaining_dependencies["services"]:
 						remaining_dependencies["services"].remove(str(service))
@@ -168,10 +162,9 @@ class YARFI:
 		for service in self.services["to_start"]:
 			self.printDebug("Checking " + str(service) + "...")
 			remaining_dependencies = service.depends[:]
-			for dependency in remaining_dependencies:
-				for x in self.services["running"]:
-					if str(x) == dependency:
-						remaining_dependencies.remove(dependency)
+			for srv in self.services["running"]:
+				if str(srv) in remaining_dependencies:
+					remaining_dependencies.remove(str(srv))
 			remaining_conflicts = service.conflicts[:]
 			for conflict in remaining_conflicts:
 				isFound = False
@@ -279,11 +272,10 @@ class YARFI:
 		self.printDebug ("Wanted target: " + wanted_target)
 		target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
 		self.printDebug("Trying to reach "+ target.description +" target...")
-		for conflict in target.conflicts:
-			for status in ["running", "starting", "to_start"]:
-				for x in self.services[status]:
-					if conflict == str(x):
-						self.stop(conflict)
+		for status in ["running", "starting", "to_start"]:
+			for srv in self.services[status]:
+				if str(srv) in target.conflicts:
+					self.stop(str(srv))
 		for trg in target.depends_targets:
 			self.reach_target(trg)
 		self.targets["to_reach"].append(target)
@@ -295,11 +287,10 @@ class YARFI:
 		try:
 			service = __import__("services."+srv, fromlist=[srv]).Service()
 			self.services["to_start"].append(service)
-			for conflict in service.conflicts:
-				for status in ["running", "starting", "to_start"]:
-					for x in self.services[status]:
-						if conflict == str(x):
-							self.stop(conflict)
+			for status in ["running", "starting", "to_start"]:
+				for x in self.services[status]:
+					if str(x) in service.conflicts:
+						self.stop(str(x))
 			self.startTimer()
 			self.printDebug (service.description + " service is queued to start.")
 		except Exception as e:
@@ -310,10 +301,10 @@ class YARFI:
 	def stop(self, srv):
 		self.printDebug ("Trying to stop " + srv + " service...")
 		try:
-			for status in self.services:
-				for x in self.services[status]:
-					if str(x) == srv:
-						service = x
+			services = self.getCurrentServices()
+			for x in services:
+				if str(x) == srv:
+					service = x
 			for status in ["running", "starting", "to_start"]:
 				for x in self.services[status]:
 					for dependency in x.depends:
