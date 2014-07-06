@@ -33,6 +33,3 @@ class Service(Srv):
 	
 	def status(self):
 		pass
-	
-	def status(self):
-		pass
