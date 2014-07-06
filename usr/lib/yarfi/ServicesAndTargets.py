@@ -15,7 +15,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ServicesAndTargets:
-	pass
+	def __str__(self):
+		return (self.__module__.split(".")[1])
 
 class Service(ServicesAndTargets):
 	pass
