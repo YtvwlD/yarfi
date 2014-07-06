@@ -1,4 +1,4 @@
-﻿# YARFI - Yet Another Replacement For Init
+# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,9 @@
 import subprocess
 import os
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "Network - configured by /etc/network/interfaces"
 		self.depends = ["system", "filesystem"]

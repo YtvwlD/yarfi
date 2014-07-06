@@ -1,4 +1,4 @@
-﻿# YARFI - Yet Another Replacement For Init
+# YARFI - Yet Another Replacement For Init
 # Copyright (C) 2014 Niklas Sombert
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,9 @@
 
 import subprocess
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "mount filesystems" #and check them?
 		self.depends = ["system"]

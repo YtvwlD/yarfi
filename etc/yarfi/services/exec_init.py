@@ -17,7 +17,9 @@
 import os
 import sys
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "execs /sbin/init"
 		self.depends = []

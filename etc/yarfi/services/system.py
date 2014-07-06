@@ -14,7 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "a symbolical service"
 		self.depends = []

@@ -14,11 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from yarfi.ServicesAndTargets import Target as Trg
+class ServicesAndTargets:
+	pass
 
-class Target(Trg):
-	def __init__(self):
-		self.description = "Single User Mode"
-		self.depends_targets = []
-		self.depends_services = ["single", "dbus"]
-		self.conflicts = [] #nothing
+class Service(ServicesAndTargets):
+	pass
+
+class Target(ServicesAndTargets):
+	pass
