@@ -18,7 +18,9 @@ import os
 import subprocess
 import time
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "message bus"
 		self.depends = ["system"]
@@ -46,7 +48,7 @@ class Service:
 		group.close()
 		os.chown("/var/run/dbus", uid, gid)
 		subprocess.Popen(["dbus-uuidgen", "--ensure"]).wait()
-		self.process = subprocess.Popen(["dbus-daemon", "--system"])
+		self.process = subprocess.Popen(["dbus-daemon", "--system", "--nofork"])
 	
 	def stop(self):
 		self.process.terminate()

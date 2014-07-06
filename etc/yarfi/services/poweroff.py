@@ -16,7 +16,9 @@
 
 import subprocess
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "switches the system off"
 		self.depends = []

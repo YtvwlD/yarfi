@@ -17,7 +17,9 @@
 import subprocess
 import time
 
-class Service:
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "make networking simple and straightforward"
 		self.depends = ["system", "dbus", "ifupdown", "filesystem"] #does it really depend on "filesystem"?
