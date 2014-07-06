@@ -19,7 +19,20 @@ class ServicesAndTargets:
 		return (self.__module__.split(".")[1])
 
 class Service(ServicesAndTargets):
-	pass
+	def __init__(self): #At least copy and modify this.
+		self.description = "No description here."
+		self.depends = []
+		self.conflicts = []
+		self.status_ = ""
+	
+	def start(self):
+		self.status_ = "running"
+	
+	def stop(self):
+		self.status_ = "stopped"
+	
+	def status(self):
+		return (self.status_)
 
 class Target(ServicesAndTargets):
 	pass
