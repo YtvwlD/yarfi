@@ -30,14 +30,14 @@ class YARFI:
 		print("Trying to reach "+ target.description +" target...")
 		for conflict in target.conflicts:
 			for srv in self.services:
-				if conflict == srv.__module__.split(".")[1]:
+				if conflict == str(srv):
 					self.stop(conflict)
 		for trg in target.depends_targets:
 			self.reach_target(trg)
 		remaining_dependencies = target.depends_services
 		for srv in self.services:
 			for dependency in remaining_dependencies:
-				if srv.__module__.split(".")[1] == dependency:
+				if str(srv) == dependency:
 					remaining_dependencies.remove(dependency)
 		for dependency in remaining_dependencies:
 			self.start(dependency)
@@ -49,12 +49,12 @@ class YARFI:
 			service = __import__("services."+srv, fromlist=[srv]).Service()
 			for conflict in service.conflicts:
 				for x in self.services:
-					if conflict == x.__module__.split(".")[1]:
+					if conflict == str(x):
 						self.stop(conflict)
 			remaining_dependencies = service.depends
 			for x in self.services:
 				for dependency in remaining_dependencies:
-					if x.__module__.split(".")[1] == dependency:
+					if str(x) == dependency:
 						remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.start(dependency)
@@ -70,11 +70,11 @@ class YARFI:
 		print ("Trying to stop " + srv + " service...")
 		try:
 			for x in self.services:
-				if x.__module__.split(".")[1] == srv:
+				if str(x) == srv:
 					service = x
 			for x in self.services:
 				for dependency in x.depends:
-					if dependency == x.__module__.split(".")[1]:
+					if dependency == str(x):
 						self.stop(dependency)
 			service.stop()
 			self.services.remove(service)
