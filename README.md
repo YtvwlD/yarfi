@@ -1,8 +1,8 @@
 yarfi
 =====
 
-[![Build Status](https://travis-ci.org/YtvwlD/yarfi.svg?branch=master)](https://travis-ci.org/YtvwlD/yarfi)
-[![Code Health](https://landscape.io/github/YtvwlD/yarfi/master/landscape.png)](https://landscape.io/github/YtvwlD/yarfi/master)
+[![Build Status](https://travis-ci.org/YtvwlD/yarfi.svg?branch=both)](https://travis-ci.org/YtvwlD/yarfi)
+[![Code Health](https://landscape.io/github/YtvwlD/yarfi/both/landscape.png)](https://landscape.io/github/YtvwlD/yarfi/both)
 
 Yet Another Replacement For Init - writtten in Python
 
