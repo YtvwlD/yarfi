@@ -159,6 +159,8 @@ class YARFI:
 						self.targets["to_reach"].remove(target)
 				else:
 					self.printDebug(target.__module__.split(".")[1] + " is not reached.")
+					self.printDebug(" ... because there are remaining dependencies: " + str(remaining_dependencies["targets"]) + str(remaining_dependencies["services"]))
+					self.printDebug(" ... because there are remaining conflicts: " + str(remaining_conflicts))
 					if target in self.targets["reached"]:
 						self.targets["reached"].remove(target) #TODO: Should it be reached again?
 	
