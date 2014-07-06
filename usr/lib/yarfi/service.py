@@ -88,25 +88,25 @@ class YARFI:
 		"""checks whether targets have dependencies that have not been imported yet"""
 		# check for targets that are missing
 		for target in self.targets["to_reach"]:
-			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
+			self.printDebug("Checking " + str(target) + "...")
 			remaining_dependencies = target.depends_targets[:]
 			for dependency in remaining_dependencies:
 				for status in ["reached", "to_reach"]:
 					for x in self.targets[status]:
-						if x.__module__.split(".")[1] == dependency:
+						if str(x) == dependency:
 							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
 				self.targets["to_reach"].append(__import__("targets."+dependency, fromlist=[dependency]).Target())
 		# check for services that are missing
 		for target in self.targets["to_reach"]:
-			self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
+			self.printDebug("Checking " + str(target) + "...")
 			remaining_dependencies = target.depends_services[:]
 			for dependency in remaining_dependencies:
 				services = self.getCurrentServices()
 				for srv in services:
 					for dependency in remaining_dependencies:
-						if srv.__module__.split(".")[1] == dependency:
+						if str(srv) == dependency:
  							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
@@ -115,13 +115,13 @@ class YARFI:
 	def check_services_have_dependencies(self):
 		"""checks whether services have dependencies that have not been imported yet"""
 		for service in self.services["to_start"]:
-			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
+			self.printDebug("Checking " + str(service) + "...")
 			remaining_dependencies = service.depends[:]
 			for dependency in remaining_dependencies:
 				services = self.getCurrentServices()
 				for srv in services:
 					for dependency in remaining_dependencies:
-						if srv.__module__.split(".")[1] == dependency:
+						if str(srv) == dependency:
 							remaining_dependencies.remove(dependency)
 			for dependency in remaining_dependencies:
 				self.printDebug("Importing " + dependency + "...")
@@ -131,33 +131,33 @@ class YARFI:
 		"""checks whether a target is reached"""
 		for status in self.targets:
 			for target in self.targets[status]:
-				self.printDebug("Checking " + target.__module__.split(".")[1] + "...")
+				self.printDebug("Checking " + str(target) + "...")
 				remaining_dependencies = {"targets": [], "services": []}
 				remaining_dependencies["targets"] = target.depends_targets[:]
 				remaining_dependencies["services"] = target.depends_services[:]
 				for dependency in remaining_dependencies["targets"]:
 					for x in self.targets["reached"]:
-						if x.__module__.split(".")[1] == dependency:
+						if str(x) == dependency:
 							remaining_dependencies["targets"].remove(dependency)
 				for service in self.services["running"]:
-					if service.__module__.split(".")[1] in remaining_dependencies["services"]:
-						remaining_dependencies["services"].remove(service.__module__.split("."))
+					if str(service) in remaining_dependencies["services"]:
+						remaining_dependencies["services"].remove(str(service))
 				remaining_conflicts = target.conflicts[:]
 				for conflict in remaining_conflicts:
 					isFound = False
 					for status in ["running", "starting", "to_start"]:
 						for x in self.services[status]:
-							if x.__module__.split(".")[1] == conflict:
+							if str(x) == conflict:
 								isFound = True
 					if not isFound:
 						remaining_conflicts.remove(conflict)
 				if not remaining_dependencies["targets"] and not remaining_dependencies["services"] and not remaining_conflicts:
-					self.printDebug(target.__module__.split(".")[1] + " is reached.")
+					self.printDebug(str(target) + " is reached.")
 					if target in self.targets["to_reach"]:
 						self.targets["reached"].append(target)
 						self.targets["to_reach"].remove(target)
 				else:
-					self.printDebug(target.__module__.split(".")[1] + " is not reached.")
+					self.printDebug(str(target) + " is not reached.")
 					self.printDebug(" ... because there are remaining dependencies: " + str(remaining_dependencies["targets"]) + str(remaining_dependencies["services"]))
 					self.printDebug(" ... because there are remaining conflicts: " + str(remaining_conflicts))
 					if target in self.targets["reached"]:
@@ -166,50 +166,50 @@ class YARFI:
 	def check_services_can_start(self):
 		"""checks whether a service can start"""
 		for service in self.services["to_start"]:
-			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
+			self.printDebug("Checking " + str(service) + "...")
 			remaining_dependencies = service.depends[:]
 			for dependency in remaining_dependencies:
 				for x in self.services["running"]:
-					if x.__module__.split(".")[1] == dependency:
+					if str(x) == dependency:
 						remaining_dependencies.remove(dependency)
 			remaining_conflicts = service.conflicts[:]
 			for conflict in remaining_conflicts:
 				isFound = False
 				for status in ["running", "starting", "to_start"]:
 					for x in self.services[status]:
-						if x.__module__.split(".")[1] == conflict:
+						if str(x) == conflict:
 							isFound = True
 				if not isFound:
 					remaining_conflicts.remove(conflict)
 			if not remaining_dependencies and not remaining_conflicts:
-				self.printDebug(service.__module__.split(".")[1] + " can start.")
+				self.printDebug(str(service) + " can start.")
 				self.services["can_start"].append(service)
 				self.services["to_start"].remove(service)
 			else:
-				self.printDebug(service.__module__.split(".")[1] + " can't start.")
+				self.printDebug(str(service) + " can't start.")
 				self.printDebug(" ... because there are remaining dependencies: " + str(remaining_dependencies))
 				self.printDebug(" ... because there are remaining conflicts: " + str(remaining_conflicts))
 	
 	def check_services_can_stop(self):
 		"""checks whether a service can be stopped"""
 		for service in self.services["to_shut_down"]:
-			self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
+			self.printDebug("Checking " + str(service) + "...")
 			canBeStopped = True
 			for status in ["running", "starting", "can_start", "shutting_down"]:
 				for x in self.services[status]:
-					if service.__module__.split(".")[1] in x.depends:
+					if str(service) in x.depends:
 						canBeStopped = False
 			if canBeStopped:
-				self.printDebug(service.__module__.split(".")[1] + " can be stopped.")
+				self.printDebug(str(service) + " can be stopped.")
 				self.services["can_shut_down"].append(service)
 				self.services["to_shut_down"].remove(service)
 			else:
-				self.printDebug(service.__module__.split(".")[1] + " can't be stopped.")
+				self.printDebug(str(service) + " can't be stopped.")
 
 	def start_services(self):
 		"""starts the services that can be started"""
 		for service in self.services["can_start"]:
-			self.printDebug("Starting " + service.__module__.split(".")[1] + "...")
+			self.printDebug("Starting " + str(service) + "...")
 			ServiceThread(self, service, "start").start()
 			self.services["can_start"].remove(service)
 			self.services["starting"].append(service)
@@ -217,7 +217,7 @@ class YARFI:
 	def stop_services(self):
 		"""stops the services that can be stopped"""
 		for service in self.services["can_shut_down"]:
-			self.printDebug("Stopping " + service.__module__.split(".")[1] + "...")
+			self.printDebug("Stopping " + str(service) + "...")
 			ServiceThread(self, service, "stop").start()
 			self.services["can_shut_down"].remove(service)
 			self.services["shutting_down"].append(service)
@@ -226,12 +226,12 @@ class YARFI:
 		"""checks whether the status of a service has changed"""
 		for status in ["starting", "shutting_down"]: #TODO: check every status
 			for service in self.services[status]:
-				self.printDebug("Checking " + service.__module__.split(".")[1] + "...")
+				self.printDebug("Checking " + str(service) + "...")
 				ServiceThread(self, service, "status").start()
 	
 	def service_status_has_changed(self, service, status):
 		if status in ["running", "stopped"]: #TODO: Handle crashes and respawn
-			self.printDebug("The status of " + service.__module__.split(".")[1] + " has changed to '" + status + "'.")
+			self.printDebug("The status of " + str(service) + " has changed to '" + status + "'.")
 			if service in self.services["starting"]:
 				if status == "running":
 					self.services["running"].append(service)
@@ -257,13 +257,13 @@ class YARFI:
 			sys.stdout.write(clearline)
 			sys.stdout.write("Targets " + status + ":")
 			for x in self.targets[status]:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
+				sys.stdout.write(" " + str(x))
 			sys.stdout.write("\n")
 		for status in self.services:
 			sys.stdout.write(clearline)
 			sys.stdout.write("Services " + status + ":")
 			for x in self.services[status]:
-				sys.stdout.write(" " + x.__module__.split(".")[1])
+				sys.stdout.write(" " + str(x))
 			sys.stdout.write("\n")
 		try:
 			sys.stdout.write(self.delimiter * (cols/2))
@@ -282,7 +282,7 @@ class YARFI:
 		for conflict in target.conflicts:
 			for status in ["running", "starting", "to_start"]:
 				for x in self.services[status]:
-					if conflict == x.__module__.split(".")[1]:
+					if conflict == str(x):
 						self.stop(conflict)
 		for trg in target.depends_targets:
 			self.reach_target(trg)
@@ -298,7 +298,7 @@ class YARFI:
 			for conflict in service.conflicts:
 				for status in ["running", "starting", "to_start"]:
 					for x in self.services[status]:
-						if conflict == x.__module__.split(".")[1]:
+						if conflict == str(x):
 							self.stop(conflict)
 			self.startTimer()
 			self.printDebug (service.description + " service is queued to start.")
@@ -312,13 +312,13 @@ class YARFI:
 		try:
 			for status in self.services:
 				for x in self.services[status]:
-					if x.__module__.split(".")[1] == srv:
+					if str(x) == srv:
 						service = x
 			for status in ["running", "starting", "to_start"]:
 				for x in self.services[status]:
 					for dependency in x.depends:
-						if dependency == service.__module__.split(".")[1]:
-							self.stop(x.__module__.split(".")[1])
+						if dependency == str(service):
+							self.stop(str(x))
 			self.services["to_shut_down"].append(service)
 			self.startTimer()
 			self.printDebug (service.description + " service is queued to be stopped.")
