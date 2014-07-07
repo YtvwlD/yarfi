@@ -30,7 +30,7 @@ class Service(Srv):
 	
 	def start(self):
 		try:
-			os.mkdir("/run/dbus/network")
+			os.mkdir("/run/network")
 		except OSError as e:
 			if e.errno == 17: #the folder already exists
 				pass
