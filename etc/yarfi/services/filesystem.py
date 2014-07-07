@@ -36,7 +36,7 @@ class Service(Srv):
 	
 	def stop(self):
 		self.mount = None
-		self.remount = None
+		self.remount = []
 		self.umount = subprocess.Popen(["umount", "-a", "-r"])
 	
 	def status(self):
@@ -45,4 +45,15 @@ class Service(Srv):
 				return ("running")
 		elif self.umount:
 			if self.umount.poll() is not None:
-				return ("stopped")
+				if not self.remount:
+					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/proc"]))
+					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/sys"]))
+					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/run"]))
+					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/dev"]))
+				else:
+					finished = True
+					for remount in self.remount:
+						if remount.poll() is None:
+							finished = False
+					if finished:
+						return ("stopped")
