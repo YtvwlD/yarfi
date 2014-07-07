@@ -23,7 +23,7 @@ from yarfi.ServicesAndTargets import Service as Srv
 class Service(Srv):
 	def __init__(self):
 		self.description = "message bus"
-		self.depends = ["system"]
+		self.depends = []
 		self.conflicts = []
 		self.respawn = True
 		self.process = None

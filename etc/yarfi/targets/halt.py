@@ -21,4 +21,4 @@ class Target(Trg):
 		self.description = "halts the system"
 		self.depends_targets = []
 		self.depends_services = []
-		self.conflicts = ["system", "filesystem", "dbus", "single"] #everything
+		self.conflicts = ["system", "dbus", "single"] #everything

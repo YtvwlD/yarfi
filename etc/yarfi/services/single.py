@@ -22,7 +22,7 @@ from yarfi.ServicesAndTargets import Service as Srv
 class Service(Srv):
 	def __init__(self):
 		self.description = "Single User Mode"
-		self.depends = ["system"]
+		self.depends = []
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
