@@ -29,7 +29,7 @@ class Service(Srv):
 	
 	def start(self):
 		for tty in range(7): #how many ttys?
-			self.processes.append(subprocess.Popen(["getty", "-8", "38400", "tty"+str(tty+1)]))
+			self.processes.append(subprocess.Popen(["agetty", "-8", "38400", "tty"+str(tty+1)]))
 	
 	def stop(self):
 		for process in self.processes:
