@@ -16,9 +16,9 @@
 
 import os
 import subprocess
-import time
 
 from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
@@ -51,13 +51,7 @@ class Service(Srv):
 		self.process = subprocess.Popen(["dbus-daemon", "--system", "--nofork"])
 	
 	def stop(self):
-		self.process.terminate()
-		for x in range(5):
-			time.sleep(2)
-			if self.process.poll() is not None:
-				break
-		if self.process.poll() is None:
-				self.process.kill()
+		kill(self.process)
 		os.remove("/var/run/dbus/pid")
 	
 	def status(self):

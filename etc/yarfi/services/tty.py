@@ -15,9 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import time
 
 from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
@@ -33,13 +33,7 @@ class Service(Srv):
 	
 	def stop(self):
 		for process in self.processes:
-			process.terminate()
-			for x in range(5):
-				time.sleep(2)
-				if process.poll() is not None:
-					break
-			if process.poll() is None:
-				process.kill()
+			kill(process)
 	
 	def status(self):
 		running = 0
