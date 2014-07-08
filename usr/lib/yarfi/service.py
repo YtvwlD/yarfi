@@ -42,6 +42,13 @@ class YARFI:
 		for dependency in remaining_dependencies:
 			self.start(dependency)
 		print(target.description + " target reached.")
+		sys.stdout.write("Eliminating zombie processes...")
+		sys.stdout.flush()
+		for service in self.services:
+			# TODO: If the service has died, this will return "stopped". What to do then?
+			service.status()
+		sys.stdout.write(" ... done.\n")
+		sys.stdout.flush()
 
 	def start(self, srv):
 		print ("Trying to start " + srv + "...")
