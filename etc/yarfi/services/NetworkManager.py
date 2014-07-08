@@ -32,9 +32,12 @@ class Service(Srv):
 	
 	def stop(self):
 		self.process.terminate()
+		for x in range(5):
+			time.sleep(2)
+			if self.process.poll() is not None:
+				break
 		if self.process.poll() is None:
-			time.sleep(5)
-			self.process.kill()
+				self.process.kill()
 	
 	def status(self):
 		if self.process:
