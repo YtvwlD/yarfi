@@ -35,5 +35,5 @@ class DBusService(Object):
 		self.yarfi.stop(service)
 	
 	@method("de.ytvwld.yarfi", in_signature="s", out_signature=None)
-	def reach_target(self, target):
+	def reach(self, target):
 		self.yarfi.reach_target(target)

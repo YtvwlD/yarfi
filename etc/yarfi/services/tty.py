@@ -15,39 +15,35 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import os
 
 from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = ["system", "filesystem"]
+		self.description = "gettys on /dev/tty*"
+		self.depends = ["system"]
 		self.conflicts = []
-		self.respawn = False
-		self.ifup = None
-		self.ifdown = None
+		self.respawn = True
+		self.processes = []
 	
 	def start(self):
-		try:
-			os.mkdir("/run/network")
-		except OSError as e:
-			if e.errno == 17: #the folder already exists
-				pass
-			else:
-				raise
-		self.ifup = subprocess.Popen(["ifup", "-a"])
-		self.ifdown = None
+		for tty in range(7): #how many ttys?
+			self.processes.append(subprocess.Popen(["agetty", "-8", "38400", "tty"+str(tty+1)]))
 	
 	def stop(self):
-		self.ifdown = subprocess.Popen(["ifdown", "-a"])
-		self.ifup = None
-		# TODO: What happens if there are mounted network filesystems?
+		for process in self.processes:
+			kill(process)
 	
 	def status(self):
-		if self.ifup:
-			if self.ifup.poll() is not None:
-				return ("running")
-		elif self.ifdown:
-			if self.ifdown.poll() is not None:
-				return ("stopped")
+		running = 0
+		stopped = 0
+		for process in self.processes:
+			if process.poll() is None:
+				running += 1
+			else:
+				stopped += 1
+		if running and not stopped:
+			return ("running")
+		elif stopped and not running:
+			return ("stopped")
