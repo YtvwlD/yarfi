@@ -19,6 +19,6 @@ from yarfi.ServicesAndTargets import Target as Trg
 class Target(Trg):
 	def __init__(self):
 		self.description = "switches the system off"
-		self.depends_targets = ["halt"]
+		self.depends_targets = []
 		self.depends_services = ["poweroff"]
 		self.conflicts = []

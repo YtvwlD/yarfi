@@ -14,11 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from yarfi.ServicesAndTargets import Target as Trg
+import subprocess
 
-class Target(Trg):
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
 		self.description = "halts the system"
-		self.depends_targets = []
-		self.depends_services = ["halt"]
-		self.conflicts = []
+		self.depends = []
+		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "halt" target instead)
+		self.process = None
+	
+	def start(self):
+		self.process = subprocess.Popen(["halt", "-f"])
+	
+	def stop(self):
+		pass
+	
+	def status(self):
+		if self.process:
+			if self.process.poll() is not None:
+				return ("running")
