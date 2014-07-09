@@ -22,12 +22,3 @@ class Service(Srv):
 		self.depends = []
 		self.conflicts = ["halt"]
 		self.status_ = ""
-	
-	def start(self):
-		self.status_ = "running"
-	
-	def stop(self):
-		self.status_ = "stopped"
-	
-	def status(self):
-		return (self.status_)

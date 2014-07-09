@@ -22,7 +22,7 @@ class Service(Srv):
 	def __init__(self):
 		self.description = "reboots the system"
 		self.depends = []
-		self.conflicts = ["system"] # do NOT invoke this directly! (use the "reboot" target instead)
+		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "reboot" target instead)
 		self.process = None
 	
 	def start(self):

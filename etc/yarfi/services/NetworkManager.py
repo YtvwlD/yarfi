@@ -15,9 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import time
 
 from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
@@ -31,10 +31,7 @@ class Service(Srv):
 		self.process = subprocess.Popen(["NetworkManager"])
 	
 	def stop(self):
-		self.process.terminate()
-		if self.process.poll() is None:
-			time.sleep(5)
-			self.process.kill()
+		kill(self.process)
 	
 	def status(self):
 		if self.process:

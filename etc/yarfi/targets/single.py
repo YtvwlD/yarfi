@@ -21,4 +21,4 @@ class Target(Trg):
 		self.description = "Single User Mode"
 		self.depends_targets = []
 		self.depends_services = ["single", "dbus"]
-		self.conflicts = [] #nothing
+		self.conflicts = ["system"]

@@ -24,7 +24,7 @@ print ("under certain conditions.")
 import argparse
 parser = argparse.ArgumentParser(
 	description="This controls a running yarfi daemon via D-Bus.",
-	epilog="Commands can be:\n * start\n* stop\n * reach_target"
+	epilog="Commands can be:\n * start\n* stop\n * reach"
 )
 parser.add_argument("command", help="specify a command (see below)")
 parser.add_argument("argument", help="this can be a service or a target")
@@ -50,8 +50,8 @@ if args.command == "start":
 elif args.command == "stop":
 	yarfi.stop(args.argument)
 
-elif args.command == "reach_target":
-	yarfi.reach_target(args.argument)
+elif args.command == "reach":
+	yarfi.reach(args.argument)
 
 else:
 	parser.print_help()

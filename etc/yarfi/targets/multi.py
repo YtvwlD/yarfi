@@ -18,7 +18,7 @@ from yarfi.ServicesAndTargets import Target as Trg
 
 class Target(Trg):
 	def __init__(self):
-		self.description = "halts the system"
+		self.description = "Multi User Mode"
 		self.depends_targets = []
-		self.depends_services = ["halt"]
-		self.conflicts = []
+		self.depends_services = ["dbus", "filesystem", "tty"]
+		self.conflicts = ["single"]

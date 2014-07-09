@@ -15,39 +15,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import subprocess
-import os
 
 from yarfi.ServicesAndTargets import Service as Srv
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = ["system", "filesystem"]
-		self.conflicts = []
-		self.respawn = False
-		self.ifup = None
-		self.ifdown = None
+		self.description = "halts the system"
+		self.depends = []
+		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "halt" target instead)
+		self.process = None
 	
 	def start(self):
-		try:
-			os.mkdir("/run/network")
-		except OSError as e:
-			if e.errno == 17: #the folder already exists
-				pass
-			else:
-				raise
-		self.ifup = subprocess.Popen(["ifup", "-a"])
-		self.ifdown = None
+		self.process = subprocess.Popen(["halt", "-f"])
 	
 	def stop(self):
-		self.ifdown = subprocess.Popen(["ifdown", "-a"])
-		self.ifup = None
-		# TODO: What happens if there are mounted network filesystems?
+		pass
 	
 	def status(self):
-		if self.ifup:
-			if self.ifup.poll() is not None:
+		if self.process:
+			if self.process.poll() is not None:
 				return ("running")
-		elif self.ifdown:
-			if self.ifdown.poll() is not None:
-				return ("stopped")
