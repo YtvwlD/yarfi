@@ -28,7 +28,7 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.processes = subprocess.Popen(["agetty", "-8", "38400", "tty6"])
+		self.processes = subprocess.Popen(["/sbin/agetty", "-8", "38400", "tty6"])
 	
 	def stop(self):
 		kill(self.process)
