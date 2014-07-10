@@ -15,13 +15,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from PySide.QtCore import QCoreApplication
+from PySide.QtCore import QCoreApplication, QTimer
 
 class YARFI:
 	def __init__(self, debug=False):
 		self.services = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
+		self.respawnTimer = QTimer()
+		self.respawnTimer.timeout.connect(self.respawn)
+		self.respawnTimer.setInterval(30000) #is 30 seconds the right interval?
+		self.respawnTimer.start()
 
 	def reach_target(self, wanted_target):
 		if self.debug:
@@ -90,6 +94,19 @@ class YARFI:
 			print (service.description + " service could not be stopped. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
 				raise
-
+	
+	def respawn(self):
+		if self.debug:
+			print ("Checking whether a service has exited...")
+		for service in self.services:
+			if service.status() == "stopped":
+				print (service.description + " service has exited.")
+				if service.respawn:
+					print ("Respawning it..")
+					service.start()
+				else:
+					print ("Removing it from the list of running services...")
+					self.services.remove(service)
+	
 	def exec_(self):
 		self.app.exec_()
