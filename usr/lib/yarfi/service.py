@@ -32,17 +32,15 @@ class YARFI:
 			print ("Wanted target: " + wanted_target)
 		target = __import__("targets."+wanted_target, fromlist=[wanted_target]).Target()
 		print("Trying to reach "+ target.description +" target...")
-		for conflict in target.conflicts:
-			for srv in self.services:
-				if conflict == str(srv):
-					self.stop(conflict)
+		for srv in self.services:
+			if str(srv) in target.conflicts:
+				self.stop(str(srv))
 		for trg in target.depends_targets:
 			self.reach_target(trg)
 		remaining_dependencies = target.depends_services[:]
 		for srv in self.services:
-			for dependency in remaining_dependencies:
-				if str(srv) == dependency:
-					remaining_dependencies.remove(dependency)
+			if str(srv) in remaining_dependencies:
+				remaining_dependencies.remove(str(srv))
 		for dependency in remaining_dependencies:
 			self.start(dependency)
 		print(target.description + " target reached.")
@@ -58,15 +56,13 @@ class YARFI:
 		print ("Trying to start " + srv + "...")
 		try:
 			service = __import__("services."+srv, fromlist=[srv]).Service()
-			for conflict in service.conflicts:
-				for x in self.services:
-					if conflict == str(x):
-						self.stop(conflict)
+			for srv in self.services:
+				if str(srv) in service.conflicts:
+					self.stop(str(srv))
 			remaining_dependencies = service.depends[:]
-			for x in self.services:
-				for dependency in remaining_dependencies:
-					if str(x) == dependency:
-						remaining_dependencies.remove(dependency)
+			for srv in self.services:
+				if str(srv) in remaining_dependencies:
+					remaining_dependencies.remove(str(srv))
 			for dependency in remaining_dependencies:
 				self.start(dependency)
 			service.start()
@@ -84,9 +80,8 @@ class YARFI:
 				if str(x) == srv:
 					service = x
 			for x in self.services:
-				for dependency in x.depends:
-					if dependency == str(x):
-						self.stop(dependency)
+				if str(service) in x.depends:
+					self.stop(str(x))
 			service.stop()
 			self.services.remove(service)
 			print (service.description + " service was stopped successfully.")
