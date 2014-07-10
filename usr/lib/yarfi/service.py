@@ -38,7 +38,7 @@ class YARFI:
 					self.stop(conflict)
 		for trg in target.depends_targets:
 			self.reach_target(trg)
-		remaining_dependencies = target.depends_services
+		remaining_dependencies = target.depends_services[:]
 		for srv in self.services:
 			for dependency in remaining_dependencies:
 				if str(srv) == dependency:
@@ -62,7 +62,7 @@ class YARFI:
 				for x in self.services:
 					if conflict == str(x):
 						self.stop(conflict)
-			remaining_dependencies = service.depends
+			remaining_dependencies = service.depends[:]
 			for x in self.services:
 				for dependency in remaining_dependencies:
 					if str(x) == dependency:
