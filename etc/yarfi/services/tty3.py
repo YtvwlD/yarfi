@@ -34,7 +34,8 @@ class Service(Srv):
 		kill(self.process)
 	
 	def status(self):
-		if self.process.poll() is None:
-			return ("running")
-		else:		
-			return ("stopped")
+		if self.process:
+			if self.process.poll() is None:
+				return ("running")
+			else:
+				return ("stopped")
