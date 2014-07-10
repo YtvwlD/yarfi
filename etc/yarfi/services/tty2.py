@@ -14,11 +14,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from yarfi.ServicesAndTargets import Target as Trg
+import subprocess
 
-class Target(Trg):
+from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
+
+class Service(Srv):
 	def __init__(self):
-		self.description = "Multi User Mode"
-		self.depends_targets = ["gettys"]
-		self.depends_services = ["dbus", "filesystem"]
-		self.conflicts = ["single"]
+		self.description = "getty on /dev/tty2"
+		self.depends = ["system"]
+		self.conflicts = []
+		self.respawn = True
+		self.process = None
+	
+	def start(self):
+		self.processes = subprocess.Popen(["agetty", "-8", "38400", "tty2"])
+	
+	def stop(self):
+		kill(self.process)
+	
+	def status(self):
+		if self.process.poll() is None:
+			return ("running")
+		else:		
+			return ("stopped")
