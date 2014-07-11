@@ -93,7 +93,7 @@ class YARFI:
 	def respawn(self):
 		if self.debug:
 			print ("Checking whether a service has exited...")
-		for service in self.services:
+		for service in self.services[:]:
 			if service.status() == "stopped":
 				print (service.description + " service has exited.")
 				if service.respawn:
