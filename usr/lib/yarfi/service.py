@@ -69,7 +69,7 @@ class YARFI:
 			self.services.append(service)
 			print (service.description + " service was started successfully.")
 		except Exception as e:
-			print (srv + " could not be started. (" + str(e) + ")")
+			print (str(srv) + " could not be started. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
 				raise
 
