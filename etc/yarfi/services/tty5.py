@@ -21,29 +21,21 @@ from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "gettys on /dev/tty*"
+		self.description = "getty on /dev/tty5"
 		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
-		self.processes = []
+		self.process = None
 	
 	def start(self):
-		for tty in range(7): #how many ttys?
-			self.processes.append(subprocess.Popen(["agetty", "-8", "38400", "tty"+str(tty+1)]))
+		self.process = subprocess.Popen(["/sbin/agetty", "-8", "38400", "tty5"])
 	
 	def stop(self):
-		for process in self.processes:
-			kill(process)
+		kill(self.process)
 	
 	def status(self):
-		running = 0
-		stopped = 0
-		for process in self.processes:
-			if process.poll() is None:
-				running += 1
+		if self.process:
+			if self.process.poll() is None:
+				return ("running")
 			else:
-				stopped += 1
-		if running and not stopped:
-			return ("running")
-		elif stopped and not running:
-			return ("stopped")
+				return ("stopped")

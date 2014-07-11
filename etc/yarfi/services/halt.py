@@ -26,7 +26,7 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["halt", "-f"])
+		self.process = subprocess.Popen(["/sbin/halt", "-f"])
 	
 	def stop(self):
 		pass

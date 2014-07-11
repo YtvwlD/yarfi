@@ -17,21 +17,25 @@
 import subprocess
 
 from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "switches the system off"
-		self.depends = []
-		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "poweroff" target instead)
+		self.description = "getty on /dev/tty6"
+		self.depends = ["system"]
+		self.conflicts = []
+		self.respawn = True
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["/sbin/poweroff", "-f"])
+		self.process = subprocess.Popen(["/sbin/agetty", "-8", "38400", "tty6"])
 	
 	def stop(self):
-		pass
+		kill(self.process)
 	
 	def status(self):
 		if self.process:
-			if self.process.poll() is not None:
+			if self.process.poll() is None:
 				return ("running")
+			else:
+				return ("stopped")

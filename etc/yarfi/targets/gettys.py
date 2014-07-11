@@ -14,24 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from yarfi.ServicesAndTargets import Target as Trg
 
-from yarfi.ServicesAndTargets import Service as Srv
-
-class Service(Srv):
+class Target(Trg):
 	def __init__(self):
-		self.description = "switches the system off"
-		self.depends = []
-		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "poweroff" target instead)
-		self.process = None
-	
-	def start(self):
-		self.process = subprocess.Popen(["/sbin/poweroff", "-f"])
-	
-	def stop(self):
-		pass
-	
-	def status(self):
-		if self.process:
-			if self.process.poll() is not None:
-				return ("running")
+		self.description = "gettys on different consoles"
+		self.depends_targets = []
+		self.depends_services = ["tty1", "tty2", "tty3", "tty4", "tty5", "tty6"] #add more here, if you want to
+		self.conflicts = []
