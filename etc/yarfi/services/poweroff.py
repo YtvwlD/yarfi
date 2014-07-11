@@ -26,7 +26,7 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["poweroff", "-f"])
+		self.process = subprocess.Popen(["/sbin/poweroff", "-f"])
 	
 	def stop(self):
 		pass
