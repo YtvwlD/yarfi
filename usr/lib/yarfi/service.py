@@ -125,7 +125,7 @@ class YARFI:
 	def check_targets_are_reached(self):
 		"""checks whether a target is reached"""
 		for status in self.targets:
-			for target in self.targets[status]:
+			for target in self.targets[status][:]:
 				self.printDebug("Checking " + str(target) + "...")
 				remaining_dependencies = {"targets": [], "services": []}
 				remaining_dependencies["targets"] = target.depends_targets[:]
@@ -137,7 +137,7 @@ class YARFI:
 					if str(service) in remaining_dependencies["services"]:
 						remaining_dependencies["services"].remove(str(service))
 				remaining_conflicts = target.conflicts[:]
-				for conflict in remaining_conflicts:
+				for conflict in remaining_conflicts[:]:
 					isFound = False
 					for status in ["running", "starting", "to_start"]:
 						for x in self.services[status]:
@@ -159,14 +159,14 @@ class YARFI:
 	
 	def check_services_can_start(self):
 		"""checks whether a service can start"""
-		for service in self.services["to_start"]:
+		for service in self.services["to_start"][:]:
 			self.printDebug("Checking " + str(service) + "...")
 			remaining_dependencies = service.depends[:]
 			for srv in self.services["running"]:
 				if str(srv) in remaining_dependencies:
 					remaining_dependencies.remove(str(srv))
 			remaining_conflicts = service.conflicts[:]
-			for conflict in remaining_conflicts:
+			for conflict in service.conflicts:
 				isFound = False
 				for status in ["running", "starting", "to_start"]:
 					for x in self.services[status]:
@@ -185,7 +185,7 @@ class YARFI:
 	
 	def check_services_can_stop(self):
 		"""checks whether a service can be stopped"""
-		for service in self.services["to_shut_down"]:
+		for service in self.services["to_shut_down"][:]:
 			self.printDebug("Checking " + str(service) + "...")
 			canBeStopped = True
 			for status in ["running", "starting", "can_start", "shutting_down"]:
@@ -201,7 +201,7 @@ class YARFI:
 	
 	def start_services(self):
 		"""starts the services that can be started"""
-		for service in self.services["can_start"]:
+		for service in self.services["can_start"][:]:
 			self.printDebug("Starting " + str(service) + "...")
 			ServiceThread(self, service, "start").start()
 			self.services["can_start"].remove(service)
@@ -209,7 +209,7 @@ class YARFI:
 	
 	def stop_services(self):
 		"""stops the services that can be stopped"""
-		for service in self.services["can_shut_down"]:
+		for service in self.services["can_shut_down"][:]:
 			self.printDebug("Stopping " + str(service) + "...")
 			ServiceThread(self, service, "stop").start()
 			self.services["can_shut_down"].remove(service)
