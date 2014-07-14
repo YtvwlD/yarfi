@@ -49,7 +49,7 @@ class YARFI:
 		for service in self.services:
 			# TODO: If the service has died, this will return "stopped". What to do then?
 			service.status()
-		sys.stdout.write(" ... done.\n")
+		sys.stdout.write(" ...done.\n")
 		sys.stdout.flush()
 
 	def start(self, srv):
