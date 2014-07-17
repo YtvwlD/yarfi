@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from subprocess import Popen
 import time
 
 from yarfi.ServicesAndTargets import Service as Srv
@@ -30,10 +30,10 @@ class Service(Srv):
 		self.settle = None
 	
 	def start(self):
-		self.udevd = subprocess.Popen(["/sbin/udevd"])
+		self.udevd = Popen(["/sbin/udevd"])
 		time.sleep(5) #we can't use "--daemon" here, because we need to stop it at some point
-		subprocess.Popen(["/sbin/udevadm", "trigger", "--action=add"]).wait()
-		self.settle = subprocess.Popen(["/sbin/udevadm", "settle"])
+		Popen(["/sbin/udevadm", "trigger", "--action=add"]).wait()
+		self.settle = Popen(["/sbin/udevadm", "settle"])
 		# TODO: Perhaps copy data from /dev/.udev to /run? (But this doesn't exist?)
 		# TODO: Run udevadm monitor -e? Is this really needed?
 	

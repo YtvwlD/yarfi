@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from subprocess import Popen
 import os
 
 from yarfi.ServicesAndTargets import Service as Srv
@@ -36,11 +36,11 @@ class Service(Srv):
 				pass
 			else:
 				raise
-		self.ifup = subprocess.Popen(["ifup", "-a"])
+		self.ifup = Popen(["ifup", "-a"])
 		self.ifdown = None
 	
 	def stop(self):
-		self.ifdown = subprocess.Popen(["ifdown", "-a"])
+		self.ifdown = Popen(["ifdown", "-a"])
 		self.ifup = None
 		# TODO: What happens if there are mounted network filesystems?
 	

@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from yarfi.ServicesAndTargets import Service as Srv
 
 class Service(Srv):
@@ -22,3 +24,6 @@ class Service(Srv):
 		self.depends = []
 		self.conflicts = ["halt"]
 		self.status_ = ""
+	
+	def start(self):
+		self.status_ = "running"
