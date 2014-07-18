@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from subprocess import Popen
-import time
+from time import sleep
 
 from yarfi.ServicesAndTargets import Service as Srv
 from yarfi.ServicesAndTargets import kill
@@ -31,7 +31,7 @@ class Service(Srv):
 	
 	def start(self):
 		self.udevd = Popen(["/sbin/udevd"])
-		time.sleep(5) #we can't use "--daemon" here, because we need to stop it at some point
+		sleep(5) #we can't use "--daemon" here, because we need to stop it at some point
 		Popen(["/sbin/udevadm", "trigger", "--action=add"]).wait()
 		self.settle = Popen(["/sbin/udevadm", "settle"])
 		# TODO: Perhaps copy data from /dev/.udev to /run? (But this doesn't exist?)
