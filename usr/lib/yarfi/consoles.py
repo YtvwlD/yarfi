@@ -49,6 +49,47 @@ class Direct:
 		out.write(msg)
 		out.write("\n")
 		out.flush()
+	
+	def printState(self, state):
+		if not state:
+			return
+		clearline = "\033[K"
+		with os.popen("tput cols") as tput:
+			cols = int(tput.read())
+		with os.popen("tput sc") as tput:
+			sys.stdout.write(tput.read())
+		with os.popen("tput cup 0 0") as tput:
+			sys.stdout.write(tput.read())
+		if isinstance(state[0][0], str):
+			for status in state["targets"]:
+				sys.stdout.write(clearline)
+				sys.stdout.write("Targets " + status + ":")
+				for target in state["targets"][status]:
+					sys.stdout.write(" " + str(target))
+				sys.stdout.write("\n")
+			for status in state["services"]:
+				sys.stdout.write(clearline)
+				sys.stdout.write("Services " + status + ":")
+				for service in state["services"][status]:
+					sys.stdout.write(" " + str(service))
+				sys.stdout.write("\n")
+		else:
+			sys.stdout.write(clearline)
+			sys.stdout.write("Targets:")
+			for target in state["targets"]:
+				sys.stdout.write(" " + str(target))
+			sys.stdout.write("\n")
+			sys.stdout.write(clearline)
+			sys.stdout.write("Services:")
+			for service in state["services"]:
+				sys.stdout.write(" " + str(service))
+			sys.stdout.write("\n")
+		sys.stdout.write(self.delimiter * (cols/2))
+		self.delimiter = self.delimiter[1] + self.delimiter[0]
+		sys.stdout.write("\n")
+		with os.popen("tput rc") as tput:
+			sys.stdout.write(tput.read())
+		sys.stdout.flush()
 
 class Plymouth:
 	def __init__(self, debug):
