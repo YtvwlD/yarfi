@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 from subprocess import Popen
 
 def detect(debug):
@@ -29,6 +30,15 @@ def detect(debug):
 
 class Direct:
 	def __init__(self, debug):
+		self.debug = debug
+		try:
+			os.ttyname(0)
+			self.print_(2, "Direct output to tty: " + os.ttyname(0))
+		except OSError as e:
+			self.print_(1, str(e))
+			self.print_(1, "WARNING: This is not a terminal!")
+	
+	def print_(self, debug, msg):
 		pass
 
 class Plymouth:
