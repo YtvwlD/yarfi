@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import sys
 from subprocess import Popen
 
 def detect(debug):
@@ -39,7 +40,15 @@ class Direct:
 			self.print_(1, "WARNING: This is not a terminal!")
 	
 	def print_(self, debug, msg):
-		pass
+		if debug > self.debug:
+			return
+		if debug in [0, 1]: #err or warn
+			out = sys.stderr
+		else:
+			out = sys.stdout
+		out.write(msg)
+		out.write("\n")
+		out.flush()
 
 class Plymouth:
 	def __init__(self, debug):
