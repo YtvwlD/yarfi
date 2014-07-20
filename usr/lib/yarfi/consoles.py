@@ -14,5 +14,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from subprocess import Popen
+
 def detect(debug):
-	pass
+	try:
+		if Popen(["/bin/plymouth", "-ping"]).wait() == 0:
+			return Plymouth(debug)
+	except OSError:
+		pass
+	# additional checks go here (for other boot splashs)
+	# ...
+	# We have control over the tty!
+	return Direct(debug)
+
+class Direct:
+	def __init__(self, debug):
+		pass
+
+class Plymouth:
+	def __init__(self, debug):
+		pass
