@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from subprocess import Popen
 
 from yarfi.ServicesAndTargets import Service as Srv
 
@@ -26,7 +26,7 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["/sbin/poweroff", "-f"])
+		self.process = Popen(["/sbin/poweroff", "-f"])
 	
 	def stop(self):
 		pass
