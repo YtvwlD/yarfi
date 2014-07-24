@@ -14,11 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from yarfi.ServicesAndTargets import Target as Trg
+from yarfi.ServicesAndTargets import Service as Srv
 
-class Target(Trg):
+class Service(Srv):
 	def __init__(self):
-		self.description = "Multi User Mode"
-		self.depends_targets = ["gettys"]
-		self.depends_services = ["dbus", "filesystem", "udev", "hostname", "utmp"]
-		self.conflicts = ["single"]
+		self.description = "touch /var/run/utmp"
+		self.depends = []
+		self.conflicts = []
+		self.respawn = False
+		self.status_ = ""
+	
+	def start(self):
+		self.status_ = "running"
+		open("/var/run/utmp", "w").close()
