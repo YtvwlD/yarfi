@@ -14,11 +14,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from yarfi.ServicesAndTargets import Target as Trg
+from subprocess import Popen
 
-class Target(Trg):
+from yarfi.ServicesAndTargets import Service as Srv
+
+class Service(Srv):
 	def __init__(self):
-		self.description = "Multi User Mode"
-		self.depends_targets = ["gettys"]
-		self.depends_services = ["dbus", "console-setup", "filesystem", "udev", "hostname", "utmp"]
-		self.conflicts = ["single"]
+		self.description = "set the console font and keyboard layout"
+		self.depends = []
+		self.conflicts = []
+		self.status_ = ""
+		self.process = None
+	
+	def start(self):
+		self.process = Popen(["/bin/setupcon"]) #use --force? (and --save?)
+	
+	def check(self):
+		if self.process:
+			if self.process.poll() is not None:
+				return ("running")
