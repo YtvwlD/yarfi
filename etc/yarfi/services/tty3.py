@@ -22,7 +22,7 @@ from yarfi.ServicesAndTargets import kill
 class Service(Srv):
 	def __init__(self):
 		self.description = "getty on /dev/tty3"
-		self.depends = ["system"]
+		self.depends = ["system", "console_setup", "hostname", "utmp"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
