@@ -22,7 +22,7 @@ from yarfi.ServicesAndTargets import kill
 class Service(Srv):
 	def __init__(self):
 		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem"] #does it really depend on "filesystem"?
+		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname"] #does it really depend on "filesystem"?
 		self.conflicts = []
 		self.respawn = True
 		self.process = None

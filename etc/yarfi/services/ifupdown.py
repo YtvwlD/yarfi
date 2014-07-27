@@ -22,7 +22,7 @@ from yarfi.ServicesAndTargets import Service as Srv
 class Service(Srv):
 	def __init__(self):
 		self.description = "Network - configured by /etc/network/interfaces"
-		self.depends = ["system", "filesystem"]
+		self.depends = ["system", "filesystem", "hostname"]
 		self.conflicts = []
 		self.respawn = False
 		self.ifup = None
