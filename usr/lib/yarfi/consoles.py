@@ -93,4 +93,15 @@ class Direct:
 
 class Plymouth:
 	def __init__(self, debug):
+		self.debug = debug
+	
+	def print_(self, debug, msg):
+		if debug > self.debug:
+			return
+		if debug in [0, 1]: #err or warn
+			Popen(["/bin/plymouth", "report-error", msg]).wait()
+		else:
+			Popen(["/bin/plymouth", "display-message", "--text=" + msg]).wait()
+	
+	def printState(self, state):
 		pass
