@@ -112,3 +112,9 @@ class Plymouth:
 	
 	def printState(self, state):
 		pass
+	
+	def hide(self, keep=False):
+		if keep:
+			Popen(["/bin/plymouth", "quit", "--retain-splash"]).wait()
+		else:
+			Popen(["/bin/plymouth", "quit"]).wait()
