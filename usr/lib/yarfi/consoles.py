@@ -90,6 +90,13 @@ class Direct:
 		with os.popen("tput rc") as tput:
 			sys.stdout.write(tput.read())
 		sys.stdout.flush()
+	
+	def hide(self, keep=False):
+		sys.stdout.write("\n")
+		if not keep:
+			with os.popen("tput clear") as tput:
+				sys.stdout.write(tput.read())
+		sys.stdout.flush()
 
 class Plymouth:
 	def __init__(self, debug):
