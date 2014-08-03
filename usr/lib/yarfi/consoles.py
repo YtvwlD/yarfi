@@ -113,6 +113,14 @@ class Plymouth:
 	def printState(self, state):
 		pass
 	
+	def show(self, bootup=False, shutdown=False):
+		Popen(["/bin/plymouth", "reactivate"]).wait()
+		Popen(["/bin/plymouth", "show-splash"]).wait()
+		if bootup:
+			Popen(["/bin/plymouth", "change-mode", "--boot-up"]).wait()
+		if shutdown:
+			Popen(["/bin/plymouth", "change-mode", "--shutdown"]).wait()
+	
 	def hide(self, keep=False):
 		if keep:
 			Popen(["/bin/plymouth", "quit", "--retain-splash"]).wait()
