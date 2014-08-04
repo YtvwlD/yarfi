@@ -22,7 +22,7 @@ compile-pyc:
 	pycompile .
 
 compile-pyx:
-	echo "You need to run either 'compile-pyx-2' (for Python 2.7) or 'compile-pyx-3' (for Python 3.4)."
+	echo "You need to run either 'compile-pyx-2' (for Python 2.7) or 'compile-pyx-3' (for Python 3.4) or 'compile-pyx32' (for Python 3.2)."
 
 compile-pyx-2:
 # This may probably not work.
@@ -33,6 +33,11 @@ compile-pyx-3:
 # This may probably not work.
 	find | grep [.]py | grep -v [.]pyc | xargs cython -3
 	find * | grep [.]c | grep -v [.]conf | cut -d. -f1 | xargs -I x gcc -Wall -fPIC -pthread -O2 -shared -I/usr/include/python3.4 -o x.so x.c
+
+compile-pyx-32:
+# This may probably not work.
+	find | grep [.]py | grep -v [.]pyc | xargs cython -3
+	find * | grep [.]c | grep -v [.]conf | cut -d. -f1 | xargs -I x gcc -Wall -fPIC -pthread -O2 -shared -I/usr/include/python3.2mu -o x.so x.c
 
 clean:
 	find | grep [.]pyc | xargs -I x rm -f x
