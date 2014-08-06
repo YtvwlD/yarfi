@@ -29,7 +29,10 @@ class Service(Srv):
 	def start(self):
 		self.process = Popen(["/bin/setupcon"]) #use --force? (and --save?)
 	
-	def check(self):
+	def status(self):
+		if self.status_ == "stopped":
+			return ("stopped")
 		if self.process:
 			if self.process.poll() is not None:
+				self.status_ = "running"
 				return ("running")

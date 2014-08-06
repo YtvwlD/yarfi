@@ -29,7 +29,10 @@ class Service(Srv):
 	def start(self):
 		self.process = Popen(["/bin/hostname", "-b", "-F", "/etc/hostname"])
 	
-	def check(self):
+	def status(self):
+		if self.status_ == "stopped":
+			return ("stopped")
 		if self.process:
 			if self.process.poll() is not None:
+				self.status_ = "running"
 				return ("running")
