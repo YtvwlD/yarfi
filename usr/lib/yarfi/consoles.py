@@ -91,6 +91,15 @@ class Direct:
 			sys.stdout.write(tput.read())
 		sys.stdout.flush()
 	
+	def show(self, bootup=False, shutdown=False):
+		sys.stdout.write("\n")
+		if bootup:
+			sys.stdout.write("Booting...")
+		if shutdown:
+			sys.stdout.write("Shutting down...")
+		sys.stdout.write("\n\n")
+		sys.stdout.flush()
+	
 	def hide(self, keep=False):
 		sys.stdout.write("\n")
 		if not keep:
