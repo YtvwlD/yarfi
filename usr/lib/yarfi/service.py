@@ -305,14 +305,18 @@ class YARFI:
 			for x in services:
 				if str(x) == srv:
 					service = x
-			for status in ["running", "starting", "to_start"]:
-				for x in self.services[status]:
-					for dependency in x.depends:
-						if dependency == str(service):
-							self.stop(str(x))
-			self.services["to_shut_down"].append(service)
-			self.startTimer()
-			self.printDebug (service.description + " service is queued to be stopped.")
+			if service in self.services["running"]: #only stop services that are running
+				for status in ["running", "starting", "to_start"]:
+					for x in self.services[status]:
+						for dependency in x.depends:
+							if dependency == str(service):
+								self.stop(str(x))
+				self.services["to_shut_down"].append(service)
+				self.services["running"].remove(service)
+				self.startTimer()
+				self.printDebug (service.description + " service is queued to be stopped.")
+			else:
+				self.printDebug(service.description + " service can't be queued to be stopped - it isn't running.")
 		except Exception as e:
 			self.printDebug (service.description + " service could not be stopped. (" + str(e) + ")")
 			if self.debug: #TODO: This doesn't work as expected.
