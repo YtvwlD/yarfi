@@ -28,7 +28,13 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.process = Popen(["ModemManager"])
+		try:
+			self.process = Popen(["ModemManager"])
+		except OSError as e:
+			if e.errno != 2:
+				raise
+			else:
+				self.process = Popen(["modem-manager"])
 	
 	def stop(self):
 		kill(self.process)
