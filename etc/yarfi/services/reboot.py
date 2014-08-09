@@ -26,7 +26,7 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["reboot", "-f"])
+		self.process = subprocess.Popen(["/sbin/reboot", "-f"])
 	
 	def stop(self):
 		pass
