@@ -217,7 +217,7 @@ class YARFI:
 	
 	def check_services_status_has_changed(self):
 		"""checks whether the status of a service has changed"""
-		for status in ["starting", "shutting_down"]: #TODO: check every status
+		for status in ["starting", "shutting_down", "running"]: #TODO: check every status - done?
 			for service in self.services[status]:
 				self.printDebug("Checking " + str(service) + "...")
 				ServiceThread(self, service, "status").start()
@@ -233,6 +233,21 @@ class YARFI:
 				self.services["starting"].remove(service)
 			elif service in self.services["shutting_down"]:
 				self.services["shutting_down"].remove(service)
+			elif service in self.services["running"]:
+				if status == "stopped":
+					self.printDebug(service.description + " service has exited.")
+					if service.respawn:
+						self.printDebug("Respawning it...")
+						self.services["to_start"].append(service)
+					else:
+						self.printDebug("Stopping every service that depends on it...")
+						# TODO: Stop the services that depend on this service.
+						for status in ["running", "starting", "to_start"]:
+							for x in self.services[status]:
+								for dependency in x.depends:
+									if dependency == str(service):
+										self.stop(str(x))
+					self.services["running"].remove(service)
 	
 	def printState(self):
 		"""prints the current state of targets and services"""
