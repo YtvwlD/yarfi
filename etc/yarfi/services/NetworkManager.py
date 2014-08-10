@@ -28,7 +28,7 @@ class Service(Srv):
 		self.process = None
 	
 	def start(self):
-		self.process = Popen(["NetworkManager"])
+		self.process = Popen(["NetworkManager", "--nofork"])
 	
 	def stop(self):
 		kill(self.process)
