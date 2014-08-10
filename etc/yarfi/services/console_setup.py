@@ -21,7 +21,7 @@ from yarfi.ServicesAndTargets import Service as Srv
 class Service(Srv):
 	def __init__(self):
 		self.description = "set the console font and keyboard layout"
-		self.depends = []
+		self.depends = ["udev"]
 		self.conflicts = []
 		self.status_ = ""
 		self.process = None
