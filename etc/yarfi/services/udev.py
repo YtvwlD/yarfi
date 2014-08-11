@@ -45,5 +45,6 @@ class Service(Srv):
 			if self.udevd.poll() is not None:
 				return ("stopped")
 			else:
-				if self.settle.poll() is None:
-					return ("running")
+				if self.settle:
+					if self.settle.poll() is None:
+						return ("running")
