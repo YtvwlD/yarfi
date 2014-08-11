@@ -19,7 +19,7 @@ from yarfi.ServicesAndTargets import Service as Srv
 class Service(Srv):
 	def __init__(self):
 		self.description = "touch /var/run/utmp"
-		self.depends = []
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = False
 		self.status_ = ""
