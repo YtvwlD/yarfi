@@ -23,6 +23,7 @@ class Service(Srv):
 		self.description = "halts the system"
 		self.depends = []
 		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "halt" target instead)
+		self.respawn = False
 		self.process = None
 	
 	def start(self):

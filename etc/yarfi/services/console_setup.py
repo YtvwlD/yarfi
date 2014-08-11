@@ -23,6 +23,7 @@ class Service(Srv):
 		self.description = "set the console font and keyboard layout"
 		self.depends = ["udev"]
 		self.conflicts = []
+		self.respawn = True
 		self.status_ = ""
 		self.process = None
 	

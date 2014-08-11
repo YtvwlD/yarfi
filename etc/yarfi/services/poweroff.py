@@ -23,6 +23,7 @@ class Service(Srv):
 		self.description = "switches the system off"
 		self.depends = []
 		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "poweroff" target instead)
+		self.respawn = False
 		self.process = None
 	
 	def start(self):

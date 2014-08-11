@@ -23,6 +23,7 @@ class Service(Srv):
 		self.description = "sets the hostname"
 		self.depends = []
 		self.conflicts = []
+		self.respawn = True
 		self.status_ = ""
 		self.process = None
 	
