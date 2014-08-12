@@ -38,10 +38,10 @@ class Target(ServicesAndTargets):
 	pass
 
 def kill(process):
-	import time
+	from time import sleep
 	process.terminate()
 	for x in range(5):
-		time.sleep(2)
+		sleep(2)
 		if process.poll() is not None:
 			break
 	if process.poll() is None:

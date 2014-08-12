@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from subprocess import Popen
 
 from yarfi.ServicesAndTargets import Service as Srv
 
@@ -31,13 +31,13 @@ class Service(Srv):
 	def start(self):
 		# TODO: Check the filesystems if they need to be checked.
 		self.umount = None
-		self.remount = subprocess.Popen(["mount", "-o", "remount,rw", "/"])
-		self.mount = subprocess.Popen(["mount", "-a", "--fork"])
+		self.remount = Popen(["mount", "-o", "remount,rw", "/"])
+		self.mount = Popen(["mount", "-a", "--fork"])
 	
 	def stop(self):
 		self.mount = None
 		self.remount = []
-		self.umount = subprocess.Popen(["umount", "-a", "-r"])
+		self.umount = Popen(["umount", "-a", "-r"])
 	
 	def status(self):
 		if self.mount:
@@ -46,10 +46,10 @@ class Service(Srv):
 		elif self.umount:
 			if self.umount.poll() is not None:
 				if not self.remount:
-					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/proc"]))
-					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/sys"]))
-					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/run"]))
-					self.remount.append(subprocess.Popen(["mount", "-o", "remount,rw", "/dev"]))
+					self.remount.append(Popen(["mount", "-o", "remount,rw", "/proc"]))
+					self.remount.append(Popen(["mount", "-o", "remount,rw", "/sys"]))
+					self.remount.append(Popen(["mount", "-o", "remount,rw", "/run"]))
+					self.remount.append(Popen(["mount", "-o", "remount,rw", "/dev"]))
 				else:
 					finished = True
 					for remount in self.remount:

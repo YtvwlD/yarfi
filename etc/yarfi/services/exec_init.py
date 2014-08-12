@@ -24,6 +24,7 @@ class Service(Srv):
 		self.description = "execs /sbin/init"
 		self.depends = []
 		self.conflicts = ["system"]
+		self.respawn = False
 	
 	def start(self):
 		os.execv("/sbin/init", sys.argv)

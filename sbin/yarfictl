@@ -34,7 +34,9 @@ from dbus import SystemBus, Interface, DBusException
 import sys
 
 try:
+	print ("Connecting to the system bus...")
 	bus = SystemBus()
+	print ("Connecting to the yarfi daemon...")
 	remote_object = bus.get_object("de.ytvwld.yarfi", "/yarfi")
 	yarfi = Interface(remote_object, "de.ytvwld.yarfi")
 except DBusException as e:
@@ -43,6 +45,8 @@ except DBusException as e:
 	print (" * Is D-Bus running?")
 	print (" * Is yarfi running?")
 	sys.exit(1)
+
+print ("Sending the command...")
 
 if args.command == "start":
 	yarfi.start(args.argument)

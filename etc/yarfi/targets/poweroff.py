@@ -21,4 +21,4 @@ class Target(Trg):
 		self.description = "switches the system off"
 		self.depends_targets = []
 		self.depends_services = ["poweroff"]
-		self.conflicts = []
+		self.conflicts = ["system"]

@@ -21,4 +21,8 @@ class Service(Srv):
 		self.description = "a symbolical service"
 		self.depends = []
 		self.conflicts = ["halt"]
+		self.respawn = True
 		self.status_ = ""
+	
+	def start(self):
+		self.status_ = "running"

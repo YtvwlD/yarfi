@@ -21,14 +21,20 @@ from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname", "ModemManager"] #does it really depend on "filesystem"?
+		self.description = "modem connection manager"
+		self.depends = ["system", "dbus", "filesystem", "hostname"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
 	
 	def start(self):
-		self.process = Popen(["NetworkManager", "--nofork"])
+		try:
+			self.process = Popen(["ModemManager"])
+		except OSError as e:
+			if e.errno != 2:
+				raise
+			else:
+				self.process = Popen(["modem-manager"])
 	
 	def stop(self):
 		kill(self.process)

@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import subprocess
+from subprocess import Popen
 
 from yarfi.ServicesAndTargets import Service as Srv
 from yarfi.ServicesAndTargets import kill
@@ -47,8 +47,8 @@ class Service(Srv):
 				gid = int(line.split(":")[2])
 		group.close()
 		os.chown("/var/run/dbus", uid, gid)
-		subprocess.Popen(["dbus-uuidgen", "--ensure"]).wait()
-		self.process = subprocess.Popen(["dbus-daemon", "--system", "--nofork"])
+		Popen(["dbus-uuidgen", "--ensure"]).wait()
+		self.process = Popen(["dbus-daemon", "--system", "--nofork"])
 	
 	def stop(self):
 		kill(self.process)
@@ -57,7 +57,7 @@ class Service(Srv):
 	def status(self):
 		if self.process:
 			if self.process.poll() is None:
-				test = subprocess.Popen(["python", "/etc/yarfi/services/dbus.py"])
+				test = Popen(["python", "/etc/yarfi/services/dbus.py"])
 				test.wait()
 				if test.poll() == 0:
 					return ("running")
