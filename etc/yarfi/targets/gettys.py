@@ -20,5 +20,5 @@ class Target(Trg):
 	def __init__(self):
 		self.description = "gettys on different consoles"
 		self.depends_targets = []
-		self.depends_services = ["tty1", "tty2", "tty3", "tty4", "tty5", "tty6"] #add more here, if you want to
+		self.depends_services = ["hostname", "console_setup", "tty1", "tty2", "tty3", "tty4", "tty5", "tty6"] #add more here, if you want to
 		self.conflicts = []

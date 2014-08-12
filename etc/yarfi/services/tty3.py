@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from subprocess import Popen
 
 from yarfi.ServicesAndTargets import Service as Srv
 from yarfi.ServicesAndTargets import kill
@@ -22,13 +22,13 @@ from yarfi.ServicesAndTargets import kill
 class Service(Srv):
 	def __init__(self):
 		self.description = "getty on /dev/tty3"
-		self.depends = ["system"]
+		self.depends = ["system", "utmp"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["/sbin/agetty", "-8", "38400", "tty3"])
+		self.process = Popen(["/sbin/agetty", "-8", "38400", "tty3"])
 	
 	def stop(self):
 		kill(self.process)

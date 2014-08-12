@@ -17,25 +17,23 @@
 from subprocess import Popen
 
 from yarfi.ServicesAndTargets import Service as Srv
-from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname", "ModemManager"] #does it really depend on "filesystem"?
+		self.description = "set the console font and keyboard layout"
+		self.depends = ["system", "udev"]
 		self.conflicts = []
 		self.respawn = True
+		self.status_ = ""
 		self.process = None
 	
 	def start(self):
-		self.process = Popen(["NetworkManager", "--nofork"])
-	
-	def stop(self):
-		kill(self.process)
+		self.process = Popen(["/bin/setupcon"]) #use --force? (and --save?)
 	
 	def status(self):
+		if self.status_ == "stopped":
+			return ("stopped")
 		if self.process:
-			if self.process.poll() is None:
+			if self.process.poll() is not None:
+				self.status_ = "running"
 				return ("running")
-			else:
-				return ("stopped")

@@ -3,6 +3,8 @@ virtualenv:
    system_site_packages: True
 before_install:
   - sudo apt-get install -y python-dbus python3-dbus python-pyside.qtcore python3-pyside.qtcore
+install: /bin/true
 # command to run tests, e.g. python setup.py test
 script:
-  - python sbin/yarfictl --help
+  - make compile-pyc-2
+  - make compile-pyc-3

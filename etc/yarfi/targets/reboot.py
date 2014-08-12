@@ -21,4 +21,4 @@ class Target(Trg):
 		self.description = "reboots the system"
 		self.depends_targets = []
 		self.depends_services = ["reboot"]
-		self.conflicts = []
+		self.conflicts = ["system"]

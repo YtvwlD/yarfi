@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import subprocess
+from subprocess import Popen
 
 from yarfi.ServicesAndTargets import Service as Srv
 
@@ -23,10 +23,11 @@ class Service(Srv):
 		self.description = "halts the system"
 		self.depends = []
 		self.conflicts = ["system", "single"] # do NOT invoke this directly! (use the "halt" target instead)
+		self.respawn = False
 		self.process = None
 	
 	def start(self):
-		self.process = subprocess.Popen(["/sbin/halt", "-f"])
+		self.process = Popen(["/sbin/halt", "-f"])
 	
 	def stop(self):
 		pass

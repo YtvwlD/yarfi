@@ -15,27 +15,36 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from subprocess import Popen
+from time import sleep
 
 from yarfi.ServicesAndTargets import Service as Srv
 from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname", "ModemManager"] #does it really depend on "filesystem"?
+		self.description = "start udevd, populate /dev and load drivers"
+		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
-		self.process = None
+		self.udevd = None
+		self.settle = None
 	
 	def start(self):
-		self.process = Popen(["NetworkManager", "--nofork"])
+		self.udevd = Popen(["/sbin/udevd"])
+		sleep(5) #we can't use "--daemon" here, because we need to stop it at some point
+		Popen(["/sbin/udevadm", "trigger", "--action=add"]).wait()
+		self.settle = Popen(["/sbin/udevadm", "settle"])
+		# TODO: Perhaps copy data from /dev/.udev to /run? (But this doesn't exist?)
+		# TODO: Run udevadm monitor -e? Is this really needed?
 	
 	def stop(self):
-		kill(self.process)
+		kill(self.udevd)
 	
 	def status(self):
-		if self.process:
-			if self.process.poll() is None:
-				return ("running")
-			else:
+		if self.udevd:
+			if self.udevd.poll() is not None:
 				return ("stopped")
+			else:
+				if self.settle:
+					if self.settle.poll() is None:
+						return ("running")

@@ -14,28 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from subprocess import Popen
-
 from yarfi.ServicesAndTargets import Service as Srv
-from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname", "ModemManager"] #does it really depend on "filesystem"?
+		self.description = "touch /var/run/utmp"
+		self.depends = ["system"]
 		self.conflicts = []
-		self.respawn = True
-		self.process = None
+		self.respawn = False
+		self.status_ = ""
 	
 	def start(self):
-		self.process = Popen(["NetworkManager", "--nofork"])
-	
-	def stop(self):
-		kill(self.process)
-	
-	def status(self):
-		if self.process:
-			if self.process.poll() is None:
-				return ("running")
-			else:
-				return ("stopped")
+		self.status_ = "running"
+		open("/var/run/utmp", "w").close()
