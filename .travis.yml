@@ -2,9 +2,9 @@ language: python
 virtualenv:
    system_site_packages: True
 before_install:
-  - sudo apt-get install -y python-dbus python3-dbus python-pyside.qtcore python3-pyside.qtcore python2.7-dev python3.2-dev cython
+  - sudo apt-get install -y python-dbus python3-dbus python-pyside.qtcore python3-pyside.qtcore
 install: /bin/true
 # command to run tests, e.g. python setup.py test
 script:
-  - make compile-pyx-2
-  - make compile-pyx-32
+  - make compile-pyc-2
+  - make compile-pyc-3
