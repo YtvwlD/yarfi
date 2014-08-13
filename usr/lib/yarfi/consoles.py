@@ -32,6 +32,7 @@ def detect(debug):
 class Direct:
 	def __init__(self, debug):
 		self.debug = debug
+		self.delimiter = "- "
 		try:
 			os.ttyname(0)
 			self.print_(2, "Direct output to tty: " + os.ttyname(0))
