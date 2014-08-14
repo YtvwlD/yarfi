@@ -20,7 +20,7 @@ from yarfi.ServicesAndTargets import Service as Srv
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "mount filesystems" #and check them?
+		self.description = "check filesystems and mount them"
 		self.depends = ["system"]
 		self.conflicts = []
 		self.respawn = True
@@ -29,7 +29,7 @@ class Service(Srv):
 		self.umount = None
 	
 	def start(self):
-		# TODO: Check the filesystems if they need to be checked.
+		Popen(["fsck", "-A", "-C"]).wait()
 		self.umount = None
 		self.remount = Popen(["mount", "-o", "remount,rw", "/"])
 		self.mount = Popen(["mount", "-a", "--fork"])
