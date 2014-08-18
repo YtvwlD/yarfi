@@ -14,11 +14,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from yarfi.ServicesAndTargets import Target as Trg
+from subprocess import Popen
 
-class Target(Trg):
+from yarfi.ServicesAndTargets import Service as Srv
+from yarfi.ServicesAndTargets import kill
+
+class Service(Srv):
 	def __init__(self):
-		self.description = "Multi User Mode"
-		self.depends_targets = ["gettys"]
-		self.depends_services = ["dbus", "filesystem", "udev", "cron", "anacron"]
-		self.conflicts = ["single"]
+		self.description = "anac(h)ronistic cron"
+		self.depends = ["system", "filesystem", "hostname"]
+		self.conflicts = []
+		self.respawn = True
+		self.process = None
+	
+	def start(self):
+		self.process = Popen(["/usr/sbin/anacron", "-d", "-s"])
+	
+	def stop(self):
+		kill(self.process)
+	
+	def status(self):
+		if self.process:
+			if self.process.poll() is None:
+				return ("running")
+			else:
+				return ("stopped")
