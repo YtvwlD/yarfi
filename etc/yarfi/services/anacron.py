@@ -21,14 +21,14 @@ from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname", "ModemManager"] #does it really depend on "filesystem"?
+		self.description = "anac(h)ronistic cron"
+		self.depends = ["system", "filesystem", "hostname"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
 	
 	def start(self):
-		self.process = Popen(["NetworkManager", "--no-daemon"])
+		self.process = Popen(["/usr/sbin/anacron", "-d", "-s"])
 	
 	def stop(self):
 		kill(self.process)

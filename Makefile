@@ -19,7 +19,7 @@ all:
 	echo "If you really want to do that run 'compile-pyc' or 'compile-pyx'."
 
 compile-pyc:
-		echo "You need to run either 'compile-pyc-2' (for Python 2) or 'compile-pyc-3' (for Python 3)."
+	echo "You need to run either 'compile-pyc-2' (for Python 2) or 'compile-pyc-3' (for Python 3)."
 
 compile-pyc-2:
 	pycompile .
@@ -47,7 +47,7 @@ compile-pyx-32:
 
 clean:
 	find | grep [.]pyc | xargs -I x rm -f x
-	find | grep [.]c | xargs -I x rm -f x
+	find | grep [.]c | grep -v [.]conf | xargs -I x rm -f x
 	find | grep [.]so | xargs -I x rm -f x
 
 install:

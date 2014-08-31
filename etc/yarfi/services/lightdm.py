@@ -21,14 +21,14 @@ from yarfi.ServicesAndTargets import kill
 
 class Service(Srv):
 	def __init__(self):
-		self.description = "make networking simple and straightforward"
-		self.depends = ["system", "dbus", "ifupdown", "filesystem", "hostname", "ModemManager"] #does it really depend on "filesystem"?
+		self.description = "LightDM display manager"
+		self.depends = ["system", "dbus", "filesystem", "hostname"]
 		self.conflicts = []
 		self.respawn = True
 		self.process = None
 	
 	def start(self):
-		self.process = Popen(["NetworkManager", "--no-daemon"])
+		self.process = Popen(["/usr/sbin/lightdm"])
 	
 	def stop(self):
 		kill(self.process)
