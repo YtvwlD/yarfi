@@ -20,5 +20,5 @@ class Target(Trg):
 	def __init__(self):
 		self.description = "Multi User Mode"
 		self.depends_targets = ["gettys"]
-		self.depends_services = ["dbus", "filesystem", "udev"]
+		self.depends_services = ["dbus", "filesystem", "udev", "cron", "anacron"]
 		self.conflicts = ["single"]
