@@ -18,6 +18,7 @@ import sys
 import os
 from PySide.QtCore import QCoreApplication, QTimer
 from yarfi.ServiceThread import ServiceThread
+from yarfi.ZombieThread import ZombieThread
 
 class YARFI:
 	def __init__(self, debug=False):
@@ -38,6 +39,7 @@ class YARFI:
 		self.debug = debug
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.check)
+		self.zombiethread = ZombieThread()
 		self.delimiter = "- "
 	
 	def printDebug(self, msg):
@@ -338,4 +340,5 @@ class YARFI:
 				raise
 	
 	def exec_(self):
+		self.zombiethread.start()
 		self.app.exec_()
