@@ -23,12 +23,16 @@ print ("under certain conditions.")
 
 import sys
 from PySide.QtCore import QTimer
+from subprocess import Popen
+from signal import signal, SIGINT
 
 sys.path[0] = "/etc/yarfi"
 
 # yarfi's own:
 from yarfi.DBusService import DBusService
 from yarfi.service import YARFI
+
+Popen(["/sbin/ctrlaltdel", "soft"]).wait()
 
 wanted_target = ""
 debug = False
@@ -48,6 +52,8 @@ if wanted_target == "":
 yarfi = YARFI(debug)
 	
 yarfi.reach_target(wanted_target)
+
+signal(SIGINT, lambda *a: yarfi.reach_target("reboot"))
 
 def createDBusService():
 	DBusService(yarfi)
