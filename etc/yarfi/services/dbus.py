@@ -35,7 +35,9 @@ class Service(Srv):
 			os.mkdir("/var/run/dbus")
 		except OSError as e:
 			if e.errno == 17: #the folder already exists
-				pass
+				vrd = os.walk("/var/run/dbus").next()
+				for x in vrd[2]:
+					os.unlink(vrd[0] + "/" + x)
 			else:
 				raise
 		uid = getpwnam("messagebus").pw_uid
