@@ -19,10 +19,11 @@ import os
 from PySide.QtCore import QCoreApplication, QTimer
 
 class YARFI:
-	def __init__(self, debug=False):
+	def __init__(self, debug=False, simulate=False):
 		self.services = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
+		self.simulate = simulate
 		self.respawnAndZombieTimer = QTimer()
 		self.respawnAndZombieTimer.timeout.connect(self.respawn)
 		self.respawnAndZombieTimer.timeout.connect(self.zombie)
