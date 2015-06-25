@@ -62,7 +62,10 @@ class YARFI:
 					remaining_dependencies.remove(str(srv))
 			for dependency in remaining_dependencies:
 				self.start(dependency)
-			service.start()
+			if not simulate:
+				service.start()
+			else:
+				print("Just simulating.")
 			self.services.append(service)
 			print (service.description + " service was started successfully.")
 		except Exception as e:
@@ -79,7 +82,10 @@ class YARFI:
 			for x in self.services:
 				if str(service) in x.depends:
 					self.stop(str(x))
-			service.stop()
+			if not simulate:
+				service.stop()
+			else:
+				print("Just simulating.")
 			self.services.remove(service)
 			print (service.description + " service was stopped successfully.")
 		except Exception as e:
@@ -95,7 +101,10 @@ class YARFI:
 				print (service.description + " service has exited.")
 				if service.respawn:
 					print ("Respawning it..")
-					service.start()
+					if not simulate:
+						service.start()
+					else:
+						print("Just simulating.")
 				else:
 					print ("Removing it from the list of running services...")
 					self.services.remove(service)
