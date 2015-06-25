@@ -21,7 +21,7 @@ from yarfi.ServiceThread import ServiceThread
 from yarfi.ZombieThread import ZombieThread
 
 class YARFI:
-	def __init__(self, debug=False):
+	def __init__(self, debug=False, simulate=False):
 		# a service can be: running, starting, can_start, to_start, shutting_down, to_shut_down, can_shut_down
 		self.services = {}
 		self.services["running"] = []
@@ -37,6 +37,7 @@ class YARFI:
 		self.targets["to_reach"] = []
 		self.app = QCoreApplication(sys.argv)
 		self.debug = debug
+		self.simulate = simulate
 		self.timer = QTimer()
 		self.timer.timeout.connect(self.check)
 		self.zombiethread = ZombieThread()

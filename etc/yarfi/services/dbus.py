@@ -16,6 +16,8 @@
 
 import os
 from subprocess import Popen
+from pwd import getpwnam
+from grp import getgrnam
 
 from yarfi.ServicesAndTargets import Service as Srv
 from yarfi.ServicesAndTargets import kill
@@ -33,19 +35,13 @@ class Service(Srv):
 			os.mkdir("/var/run/dbus")
 		except OSError as e:
 			if e.errno == 17: #the folder already exists
-				pass
+				vrd = os.walk("/var/run/dbus").next()
+				for x in vrd[2]:
+					os.unlink(vrd[0] + "/" + x)
 			else:
 				raise
-		passwd = open("/etc/passwd")
-		for line in passwd:
-			if line.startswith("messagebus"):
-				uid = int(line.split(":")[2])
-		passwd.close()
-		group = open("/etc/group")
-		for line in group:
-			if line.startswith("messagebus"):
-				gid = int(line.split(":")[2])
-		group.close()
+		uid = getpwnam("messagebus").pw_uid
+		gid = getgrnam("messagebus").gr_gid
 		os.chown("/var/run/dbus", uid, gid)
 		Popen(["dbus-uuidgen", "--ensure"]).wait()
 		self.process = Popen(["dbus-daemon", "--system", "--nofork"])
