@@ -46,10 +46,11 @@ for line in cmdline:
 		if z[0] == "yarfi-debug":
 			debug = True
 cmdline.close()
+simulate = "simulate" in sys.argv
 if wanted_target == "":
 	wanted_target = "default"
 
-yarfi = YARFI(debug)
+yarfi = YARFI(debug, simulate)
 	
 yarfi.reach_target(wanted_target)
 
