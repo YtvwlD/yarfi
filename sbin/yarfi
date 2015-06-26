@@ -22,17 +22,12 @@ print ("This is free software, and you are welcome to redistribute it")
 print ("under certain conditions.")
 
 import sys
+import os
 from PySide.QtCore import QTimer
 from subprocess import Popen
 from signal import signal, SIGINT
 
 sys.path[0] = "/etc/yarfi"
-
-# yarfi's own:
-from yarfi.DBusService import DBusService
-from yarfi.service import YARFI
-
-Popen(["/sbin/ctrlaltdel", "soft"]).wait()
 
 wanted_target = ""
 debug = False
@@ -47,8 +42,20 @@ for line in cmdline:
 			debug = True
 cmdline.close()
 simulate = "simulate" in sys.argv
+if os.getuid() != 0 and not simulate:
+	print("Yarfi is supposed to be run as root.")
+	sys.exit(1)
 if wanted_target == "":
 	wanted_target = "default"
+
+if simulate:
+	sys.path.append(os.path.abspath(os.path.join(os.path.curdir, "usr/lib")))
+
+# yarfi's own:
+from yarfi.DBusService import DBusService
+from yarfi.service import YARFI
+
+Popen(["/sbin/ctrlaltdel", "soft"]).wait()
 
 yarfi = YARFI(debug, simulate)
 	
