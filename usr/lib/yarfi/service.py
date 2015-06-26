@@ -206,17 +206,23 @@ class YARFI:
 		"""starts the services that can be started"""
 		for service in self.services["can_start"][:]:
 			self.printDebug("Starting " + str(service) + "...")
-			ServiceThread(self, service, "start").start()
+			if not self.simulate:
+				ServiceThread(self, service, "start").start()
 			self.services["can_start"].remove(service)
 			self.services["starting"].append(service)
+			if self.simulate:
+				self.service_status_has_changed(service, "running")
 	
 	def stop_services(self):
 		"""stops the services that can be stopped"""
 		for service in self.services["can_shut_down"][:]:
 			self.printDebug("Stopping " + str(service) + "...")
-			ServiceThread(self, service, "stop").start()
+			if not self.simulate:
+				ServiceThread(self, service, "stop").start()
 			self.services["can_shut_down"].remove(service)
 			self.services["shutting_down"].append(service)
+			if self.simulate:
+				self.service_status_has_changed(service, "stopped")
 	
 	def check_services_status_has_changed(self):
 		"""checks whether the status of a service has changed"""
